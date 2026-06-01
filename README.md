@@ -19,7 +19,7 @@ Hi, I'm Rajesh Yadav, a B.Tech Computer Science student.
 * Started my 60 Days of AI journey
 
 ### Day 1 Profile and Portrait
-![Day 1 Setup](screenshots/day01_setup.png)
+![Day 1 Setup](day01/day01_setup.png)
 
 ## Connect With Me
 
