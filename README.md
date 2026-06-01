@@ -23,4 +23,5 @@ Hi, I'm Rajesh Yadav, a B.Tech Computer Science student.
 
 ## Connect With Me
 
-GitHub: https://github.com/Rajeshydv07
+* **GitHub Profile:** https://github.com/Rajeshydv07
+* **Challenge Repository:** https://github.com/Rajeshydv07/60-day-claude-challenge-
