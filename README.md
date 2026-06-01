@@ -18,6 +18,9 @@ Hi, I'm Rajesh Yadav, a B.Tech Computer Science student.
 * Created AI Personality Profile
 * Started my 60 Days of AI journey
 
+### Day 1 Profile and Portrait
+![Day 1 Setup](screenshots/day01_setup.png)
+
 ## Connect With Me
 
 GitHub: https://github.com/Rajeshydv07
