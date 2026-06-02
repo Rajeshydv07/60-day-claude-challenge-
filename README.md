@@ -46,7 +46,7 @@ Detailed documentation and prompt engineering comparisons are located in the [Da
 * Documented comparisons, benefits, and key learnings
 
 ### Day 03 Comparison and Outputs
-Detailed documentation and comparisons are located in the [Day 03 Folder](day03/day03.md) / [Day 3 Folder](day3/day3.md).
+Detailed documentation and comparisons are located in the [Day 03 Folder](day03/day03.md).
 
 #### LinkedIn Infographic:
 ![LinkedIn Post Graphic](day03/linkedin_image.png)
