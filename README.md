@@ -37,7 +37,22 @@ Detailed documentation and prompt engineering comparisons are located in the [Da
 #### Engineered Prompt Infographic:
 ![Engineered Prompt Infographic](day02/day02_engineered.jpg)
 
+## Day 03
+
+* Explored Role-Based Prompting concepts
+* Tested prompts without roles, with Founder persona, and with Developer persona
+* Installed the Claude Usage Counter extension
+* Analyzed outputs, comparing business focus vs. technical implementation depth
+* Documented comparisons, benefits, and key learnings
+
+### Day 03 Comparison and Outputs
+Detailed documentation and comparisons are located in the [Day 03 Folder](day03/day03.md) / [Day 3 Folder](day3/day3.md).
+
+#### LinkedIn Infographic:
+![LinkedIn Post Graphic](day03/linkedin_image.png)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
 * **Challenge Repository:** https://github.com/Rajeshydv07/60-day-claude-challenge-
+
