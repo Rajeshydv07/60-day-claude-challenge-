@@ -1,6 +1,6 @@
-# Day 2 Prompt Engineering
+# Day 02 Prompt Engineering
 
-Hey there! Welcome to Day 2 of my 60-Day AI Challenge. Today, I wanted to learn about Prompt Engineering, which is the art of writing clear instructions to get exactly what you want from Claude. 
+Hey there! Welcome to Day 02 of my 60-Day AI Challenge. Today, I wanted to learn about Prompt Engineering, which is the art of writing clear instructions to get exactly what you want from Claude. 
 
 Instead of just reading about it, I decided to run a quick test. I compared a quick, lazy prompt with a detailed, smart prompt to see how different the results would be.
 
@@ -46,13 +46,13 @@ Design and Aesthetic: The lazy prompt infographic is bright and colorful but loo
 
 This is the first image which is a colorful but generic template.
 
-![Lazy Prompt Infographic](day2_lazy.jpg)
+![Lazy Prompt Infographic](day02_lazy.jpg)
 
 ### Infographic from the Engineered Prompt
 
 This is the second image which is a professional and stylish infographic customized for the challenge.
 
-![Engineered Prompt Infographic](day2_engineered.jpg)
+![Engineered Prompt Infographic](day02_engineered.jpg)
 
 ## My Key Learnings and Takeaways
 

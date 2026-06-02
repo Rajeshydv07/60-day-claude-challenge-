@@ -21,21 +21,21 @@ Hi, I'm Rajesh Yadav, a B.Tech Computer Science student.
 ### Day 1 Profile and Portrait
 ![Day 1 Setup](day01/day01_setup.png)
 
-## Day 2
+## Day 02
 
 * Explored Prompt Engineering concepts
 * Compared Lazy vs. Engineered Prompts
 * Analyzed output quality and structure
 * Documented visual comparison infographics
 
-### Day 2 Comparison and Outputs
-Detailed documentation and prompt engineering comparisons are located in the [Day 2 Folder](Day2/day2.md).
+### Day 02 Comparison and Outputs
+Detailed documentation and prompt engineering comparisons are located in the [Day 02 Folder](day02/day02.md).
 
 #### Lazy Prompt Infographic:
-![Lazy Prompt Infographic](Day2/day2_lazy.jpg)
+![Lazy Prompt Infographic](day02/day02_lazy.jpg)
 
 #### Engineered Prompt Infographic:
-![Engineered Prompt Infographic](Day2/day2_engineered.jpg)
+![Engineered Prompt Infographic](day02/day02_engineered.jpg)
 
 ## Connect With Me
 
