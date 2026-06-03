@@ -31,7 +31,10 @@ Here is the screenshot of the conversation and the final generated roadmap:
 ### 1. Claude Chat & Diagnostic Questions
 ![Claude Chat Q&A](chat_questions.png)
 
-### 2. The AI Engineer Career Roadmap PDF
+### 2. Claude's Chain-of-Thought Thinking Process
+![Claude's Chain-of-Thought Thinking Process](cot_thinking.png)
+
+### 3. The AI Engineer Career Roadmap PDF
 ![AI Engineer Career Roadmap](career_roadmap.jpg)
 
 ---
