@@ -51,6 +51,20 @@ Detailed documentation and comparisons are located in the [Day 03 Folder](day03/
 #### LinkedIn Infographic:
 ![LinkedIn Post Graphic](day03/linkedin_image.png)
 
+## Day 04
+
+* Explored Chain-of-Thought (CoT) Prompting concepts
+* Answered diagnostic questions to guide Claude's reasoning
+* Generated a personalized 6-month AI Engineer Career Roadmap
+* Analyzed skills gap and identified key action items
+* Documented roadmap, insights, and next actions
+
+### Day 04 Roadmap and Outputs
+Detailed documentation and the career roadmap are located in the [Day 04 Folder](day04/day4.md).
+
+#### AI Engineer Career Roadmap:
+![AI Engineer Career Roadmap](day04/career_roadmap.jpg)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
