@@ -65,6 +65,17 @@ Detailed documentation and the career roadmap are located in the [Day 04 Folder]
 #### AI Engineer Career Roadmap:
 ![AI Engineer Career Roadmap](day04/career_roadmap.jpg)
 
+## Day 05
+
+* Explored Context Engineering vs Prompt Engineering
+* Ran Prompt A (no context) to generate a generic 30-day ML roadmap
+* Ran Prompt B (with personal context) to generate a personalized SWE + ML/DS roadmap
+* Compared both outputs side-by-side and analyzed the role of context
+* Documented key learnings: context transforms AI from a textbook into a personal coach
+
+### Day 05 Comparison and Outputs
+Detailed documentation and prompt comparisons are located in the [Day 05 Folder](day05/day5.md).
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
