@@ -69,9 +69,6 @@ By running my original resume through Claude and applying an iterative design-op
 ### ATS Score Transformation Overview
 ![ATS Score Transformation Overview](AtS06.png)
 
-### ATS Score Cinematic Comparison
-![ATS Score Cinematic Comparison](ats_cinematic_comparison.svg)
-
 ---
 
 ## Key Learnings
