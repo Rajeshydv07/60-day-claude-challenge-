@@ -91,8 +91,23 @@ Detailed documentation, key learnings, and score comparison infographics are loc
 #### ATS Score Transformation:
 ![ATS Score Transformation](day06/AtS06.png)
 
+## Day 07
+
+* Formulated a comprehensive Claude AI Usage Strategy
+* Defined model mappings for Haiku (speed tier), Sonnet (balanced/primary), and Opus (deep reasoning tier)
+* Established an Effort Level Guide (Low, Standard, High, Max) based on task complexity
+* Mapped various professional tasks to their optimal model and effort levels
+* Designed a daily and weekly workflow for DSA practice, projects, and learning
+
+### Day 07 Outputs and Documentation
+Detailed documentation and strategy dashboards are located in the [Day 07 Folder](day07/day7.md).
+
+#### Claude AI Usage Strategy:
+![Claude AI Usage Strategy](day07/claude_strategy.jpg)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
 * **Challenge Repository:** https://github.com/Rajeshydv07/60-day-claude-challenge-
+
 
