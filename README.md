@@ -76,6 +76,21 @@ Detailed documentation and the career roadmap are located in the [Day 04 Folder]
 ### Day 05 Comparison and Outputs
 Detailed documentation and prompt comparisons are located in the [Day 05 Folder](day05/day5.md).
 
+## Day 06
+
+* Explored ATS Resume Optimization & Rewriting
+* Analyzed my original resume and converted it to an ATS-friendly single-column layout
+* Added a professional summary and categorized skills to match search filters
+* Front-loaded metrics and removed duplicate content to reduce parsing noise
+* Improved my ATS score from 54/100 to 87/100 (+33 points, +61% overall improvement)
+* Saved both the original and optimized versions of the resume
+
+### Day 06 Outputs and Documentation
+Detailed documentation, key learnings, and score comparison infographics are located in the [Day 06 Folder](day06/day6.md).
+
+#### ATS Score Transformation:
+![ATS Score Transformation](day06/AtS06.png)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
