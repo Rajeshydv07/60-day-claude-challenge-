@@ -105,9 +105,25 @@ Detailed documentation and strategy dashboards are located in the [Day 07 Folder
 #### Claude AI Usage Strategy:
 ![Claude AI Usage Strategy](day07/claude_strategy.jpg)
 
+## Day 08
+
+* Built a personal web-based **Environmental Health Analyzer** dashboard for 8 Indian cities
+* Analyzed live environmental metrics including AQI, PM2.5, PM10, TDS, hardness, and pH
+* Created dynamic charts comparing pollutants, overall AQI, and category distributions using Chart.js
+* Developed risk calculations detailing the direct impact of air and water pollution on health, skin, and hair
+* Formulated an automated report card grading system based on combined environmental factors
+* Designed a "Cinematic Edition" retro-futuristic dark mode dashboard overlay summarizing all data
+
+### Day 08 Outputs and Documentation
+Detailed documentation, interactive dashboard, and key analytical findings are located in the [Day 08 Folder](day08/day8.md).
+
+#### Environmental Health Analyzer Dashboard:
+![Environmental Health Analyzer](day08/dashboard-home.png)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
 * **Challenge Repository:** https://github.com/Rajeshydv07/60-day-claude-challenge-
+
 
 
