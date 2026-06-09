@@ -1,7 +1,7 @@
-# Day 9 — Building NutriScope with Claude AI 🥗
+# Day 9 — Building NutriScope with Claude AI 🔬
 
 ## Overview
-On Day 9 of the 60-day Claude challenge, I used Claude AI to generate a full-featured **NutriScope** nutrition tracking web application in two iterations — an MVP version and an enhanced version — then compared the results.
+On Day 9 of the 60-day Claude challenge, I used Claude AI to generate a full-featured **NutriScope** — a Precision Nutrition Tracker — as a single self-contained HTML application.
 
 ---
 
@@ -9,10 +9,10 @@ On Day 9 of the 60-day Claude challenge, I used Claude AI to generate a full-fea
 NutriScope is a **Precision Nutrition Tracker** — a single-file HTML application that lets users:
 - Set up a personal profile (age, weight, height, activity level, dietary preference, goals)
 - Log daily food intake from a built-in food database
-- Visualize macros (calories, protein, carbs, fat) and micronutrients
-- Get smart AI-generated recommendations
-- Track deficiencies and excesses
-- View interactive charts (energy ring, macro donut, radar chart, bar chart)
+- Visualize macros (calories, protein, carbs, fat) via interactive charts
+- Track deficiencies and excesses in real time
+- Get personalized recommendations based on intake vs targets
+- View BMI, BMR, and TDEE body composition snapshot
 
 ---
 
@@ -20,90 +20,82 @@ NutriScope is a **Precision Nutrition Tracker** — a single-file HTML applicati
 
 | File | Description |
 |---|---|
-| `NutriScope_MVP.html` | Version 1 — MVP generated with Prompt 1 |
-| `NutriScope_Enhanced.html` | Version 2 — Enhanced app generated with Prompt 2 |
+| `NutriScope.html` | Full NutriScope app — Precision Nutrition Tracker |
 | `day9.md` | This documentation file |
 
 ---
 
-## Prompt 1 — MVP Version
-**Goal:** Generate a basic but functional nutrition tracker with:
-- Profile setup form
-- Food log table
-- Macro tracking dashboard
-- Basic charts
+## App Features
 
-**Result:** `NutriScope_MVP.html` — 1,894 lines, ~87 KB  
-Dark-themed app with 6 navigation sections: Dashboard, Profile, Food Log, Meal Planner, Risk, and Learn.
+### 📊 Dashboard
+- 4 stat cards: Calories, Protein, Carbs, Fat
+- Animated **energy ring** showing % of daily goal consumed
+- **Macro Split** donut chart (Chart.js)
+- Top Deficiencies & Top Excesses progress bars
+- Macro Progress tracker
+
+### 👤 Profile
+- Input: Age, Gender, Height, Weight
+- Activity level selector (Sedentary → Extremely Active)
+- Dietary preference (Vegetarian / Non-Veg / Eggetarian)
+- Goal selector (Maintain / Lose / Gain weight)
+- Auto-calculates **BMI**, **BMR** (Mifflin-St Jeor), and **TDEE**
+
+### ➕ Food Log
+- Select from built-in food database
+- Enter quantity + unit (grams, ml, piece, cup, tbsp)
+- Running totals: Calories, Protein, Carbs, Fat, Fiber
+- Remove individual entries or clear all
+
+### 🧪 Nutrients
+- Full micronutrient breakdown table
+- Status indicators (Adequate / Low / Excess)
+
+### 💡 Recommendations
+- Smart recommendation cards based on deficiencies and goals
 
 ---
 
-## Prompt 2 — Enhanced Version
-**Goal:** Enhance the MVP with improved UI, better charts, and cleaner layout.
+## Tech Stack
 
-**Result:** `NutriScope_Enhanced.html` — 1,530 lines, ~58 KB  
-Refined app with 5 sections: Dashboard, Profile, Food Log, Nutrients, and Recommendations.
+| Technology | Purpose |
+|---|---|
+| HTML5 | Structure & semantics |
+| Vanilla CSS | Styling with CSS variables, dark theme |
+| Vanilla JavaScript | All logic, calculations, state |
+| Chart.js 4.4.1 (CDN) | Energy ring + macro donut charts |
+| Google Fonts: Inter + Space Grotesk | Typography |
 
 ---
 
-## Comparison: MVP vs Enhanced
+## Design Highlights
+- 🌑 **Dark theme** — base color `#0a0b0f`
+- 🎨 **Accent palette** — Purple `#6c63ff`, Teal `#00d4aa`, Coral `#ff6b6b`, Amber `#ffd166`, Cyan `#06b6d4`
+- ✨ **Animated energy ring** with glow effect
+- 🔔 **Toast notifications** for save confirmations
+- 📱 **Fully responsive** — adapts to mobile (768px / 480px breakpoints)
+- 🃏 **Card hover effects** with border color transitions
 
-| Feature | MVP (`NutriScope_MVP.html`) | Enhanced (`NutriScope_Enhanced.html`) |
-|---|---|---|
-| **Lines of Code** | ~1,894 | ~1,530 |
-| **File Size** | ~87 KB | ~58 KB |
-| **Navigation** | 6 tabs (Dashboard, Profile, Log, Plan, Risk, Learn) | 5 tabs (Dashboard, Profile, Log, Nutrients, Recs) |
-| **Typography** | Inter + DM Mono | Inter + Space Grotesk |
-| **Logo Icon** | 🥗 | 🔬 |
-| **Header Layout** | Logo + Nav in header | Logo + separate nav bar |
-| **Energy Display** | Bar chart (Chart.js) | Animated ring/donut with % overlay |
-| **Macro Chart** | Donut + bar charts | Cleaner donut chart |
-| **Stat Cards** | Gradient accent glow | Top-border accent line (--card-accent) |
-| **Recommendations** | Alert-box style | rec-card style with icon |
-| **Toast Notifications** | ❌ No | ✅ Yes (slide-up toast) |
-| **BMI/BMR Display** | Targets preview card | Full Body Composition Snapshot |
-| **Meal Planner** | ✅ Yes (7-day grid) | ❌ Removed |
-| **Risk Section** | ✅ Yes | ❌ Removed |
-| **CSV Upload** | ✅ Yes | ❌ Removed |
-| **Mobile Nav** | ✅ Bottom mobile nav | ❌ Responsive tabs instead |
-| **Card Hover** | ❌ None | ✅ Border color transition |
-| **Scrollbar** | Custom (6px) | Custom (6px, rounded) |
-| **Responsiveness** | ✅ 640px / 900px breakpoints | ✅ 768px / 480px breakpoints |
+---
+
+## How to Run
+1. Open `NutriScope.html` in any browser
+2. Go to **Profile** tab → fill in your details → click **Save Profile & Update Targets**
+3. Go to **Food Log** → select food → add entries
+4. Return to **Dashboard** to see your nutrition data update live
+5. Check **Nutrients** and **Recommendations** tabs for insights
+
+> ⚠️ **Disclaimer:** NutriScope is for educational purposes only. Nutritional data is approximate. Always consult a registered dietitian for personalized medical advice.
 
 ---
 
 ## Key Learnings
 
-1. **Claude generates complete apps in one shot** — Both HTML files are fully self-contained with embedded CSS and JavaScript. No external dependencies except Chart.js CDN.
-
-2. **Iteration refines code** — The enhanced version is more concise (~27% fewer lines) while maintaining feature parity. Claude naturally tightened the CSS, simplified the layout, and improved typography choices in the second pass.
-
-3. **Design philosophy shifted** — MVP focused on information density (6 sections, more features). Enhanced version focused on UX quality (fewer sections, better visual hierarchy, toast feedback, energy ring).
-
-4. **Prompting strategy matters** — A clearer, more specific second prompt produced code that was smaller and better structured. The MVP had legacy patterns (inline styles everywhere), while the enhanced version used more semantic CSS variables.
-
-5. **Single-file HTML apps are powerful** — Both apps run 100% offline without any backend, server, or framework. Just open in a browser.
-
-6. **AI-first development workflow** — Using Claude as the primary code generator, then comparing iterations, is a valid modern development workflow for rapid prototyping.
-
----
-
-## Tools Used
-- **Claude AI** (claude.ai) — Code generation
-- **Chart.js 4.4.1** — Data visualizations
-- **Google Fonts** — Inter, DM Mono, Space Grotesk
-- **HTML/CSS/JS** — Single-file app, no framework
-
----
-
-## How to Run
-1. Open `NutriScope_MVP.html` or `NutriScope_Enhanced.html` in any browser
-2. Go to **Profile** tab and fill in your details
-3. Click **Save Profile & Calculate Targets**
-4. Go to **Food Log** and start adding meals
-5. Return to **Dashboard** to see your nutrition data
-
-> ⚠️ **Disclaimer:** NutriScope is for educational purposes only. Nutritional data is approximate. Always consult a registered dietitian for personalized medical advice.
+1. **Claude generates complete, production-quality apps** — The app is 100% self-contained (~58 KB, 1,530 lines) with no build step required.
+2. **Single-file HTML is powerful** — Works fully offline, no server needed, just open in a browser.
+3. **AI-assisted design** — Claude chose a professional dark theme, typography, and layout without being asked for specific designs.
+4. **Chart.js integration** — Claude correctly integrated Chart.js via CDN and wired it to dynamic JS data.
+5. **CSS variables** — The design system uses CSS custom properties extensively, making the theme fully maintainable.
 
 ---
 
@@ -111,4 +103,4 @@ Refined app with 5 sections: Dashboard, Profile, Food Log, Nutrients, and Recomm
 - **Day:** 9 / 60
 - **Date:** June 9, 2026
 - **Challenge:** 60-Day Claude AI Challenge
-- **Topic:** AI-Assisted Web App Development — NutriScope Nutrition Tracker
+- **Topic:** AI-Assisted Web App Development — NutriScope Precision Nutrition Tracker
