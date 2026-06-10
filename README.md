@@ -144,7 +144,7 @@ Detailed documentation and comparisons are located in the [Day 09 Folder](day09/
 Detailed documentation is located in the [Day 10 Folder](day10/day10.md).
 
 #### Portfolio Interface:
-![Portfolio Preview](day10/portfolio_preview.jpg)
+![Portfolio Preview](day10/portfolio_screenshot.jpg)
 
 ## Connect With Me
 
