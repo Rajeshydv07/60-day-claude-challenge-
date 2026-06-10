@@ -120,10 +120,34 @@ Detailed documentation, interactive dashboard, and key analytical findings are l
 #### Environmental Health Analyzer Dashboard:
 ![Environmental Health Analyzer](day08/dashboard-home.png)
 
+## Day 09
+
+* Built **NutriScope** — a Precision Nutrition Tracker — in two iterations (MVP & Enhanced)
+* Designed a single-file HTML dashboard with dark mode using Inter and Space Grotesk typography
+* Integrated Chart.js to visualize daily macro splits (Calories, Protein, Carbs, Fat)
+* Implemented body composition calculators for BMI, BMR, and TDEE
+* Created a running food log database with localStorage persistence and slide-up toast notifications
+
+### Day 09 Outputs and Documentation
+Detailed documentation and comparisons are located in the [Day 09 Folder](day09/day9.md).
+
+#### NutriScope Dashboard:
+![NutriScope Dashboard](day09/screenshot_enhanced.png)
+
+## Day 10
+
+* Integrated and optimized personal **Developer Portfolio** page into the challenge repository
+* Removed LeetCode profile links from the social icons and direct links sections to curate active profiles
+* Staged the clean and responsive HTML portfolio layout for production deployment
+
+### Day 10 Documentation
+Detailed documentation is located in the [Day 10 Folder](day10/day10.md).
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
 * **Challenge Repository:** https://github.com/Rajeshydv07/60-day-claude-challenge-
+
 
 
 
