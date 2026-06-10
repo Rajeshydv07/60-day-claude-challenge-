@@ -1,7 +1,7 @@
 # Day 10 — Portfolio Integration & Optimization 🚀
 
 ## Overview
-On Day 10 of the 60-day Claude challenge, I imported and optimized my personal developer portfolio page (`portfolio.html`) into the `day10` folder. To customize the presentation, I programmatically removed all LeetCode social and profile link elements while maintaining the rest of the professional bio, technical skills, and project showcases.
+On Day 10 of the 60-day Claude challenge, I imported and optimized my personal developer portfolio page (`portfolio.html`) into the `day10` folder. To customize the presentation, I programmatically removed all LeetCode social and profile link elements, added a dedicated Work Experience section detailing my role as a Python Intern at Pratnik Infotech, and styled the layout to maintain a consistent glassmorphic theme.
 
 ---
 
@@ -10,6 +10,7 @@ The portfolio is a modern, responsive, and glassmorphic personal website featuri
 - **Hero & About Section:** Quick summary of background, IT focus at ABES Engineering College, and core technical tags.
 - **Skills System:** Interactive bars showing proficiency level percentages and tool/concept clouds.
 - **Projects Showcase:** Clean cards detailing key projects like the Mental Health Prediction ML pipeline and TechNova Solutions landing page.
+- **Work Experience:** Integrated section detailing my internship as a Python Intern at Pratnik Infotech, alongside metrics cards tracking project output.
 - **Certs & Achievements:** Highlights of IBM ML certifications, DUCAT Power BI workshop, and Hackerrank milestones.
 - **Interactive Contact Form:** Standard JS-validated message handler and direct contact links.
 

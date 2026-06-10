@@ -138,6 +138,7 @@ Detailed documentation and comparisons are located in the [Day 09 Folder](day09/
 
 * Integrated and optimized personal **Developer Portfolio** page into the challenge repository
 * Removed LeetCode profile links from the social icons and direct links sections to curate active profiles
+* Added a dedicated **Work Experience** section featuring my new role as a **Python Intern at Pratnik Infotech**
 * Staged the clean and responsive HTML portfolio layout for production deployment
 
 ### Day 10 Documentation
