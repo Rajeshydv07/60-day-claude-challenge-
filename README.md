@@ -143,6 +143,9 @@ Detailed documentation and comparisons are located in the [Day 09 Folder](day09/
 ### Day 10 Documentation
 Detailed documentation is located in the [Day 10 Folder](day10/day10.md).
 
+#### Portfolio Interface:
+![Portfolio Preview](day10/portfolio_preview.jpg)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07

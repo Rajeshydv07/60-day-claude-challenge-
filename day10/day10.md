@@ -20,7 +20,15 @@ The portfolio is a modern, responsive, and glassmorphic personal website featuri
 | File | Size | Description |
 |---|---|---|
 | `portfolio.html` | ~58 KB · 1,192 lines | Optimized version of personal portfolio page |
+| `portfolio_preview.jpg` | ~253 KB | Screenshot of the integrated portfolio interface |
 | `day10.md` | — | This documentation file |
+
+---
+
+## Portfolio Interface
+Below is the preview screenshot of the personal developer portfolio:
+
+![Portfolio Preview](portfolio_preview.jpg)
 
 ---
 
