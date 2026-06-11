@@ -147,10 +147,26 @@ Detailed documentation is located in the [Day 10 Folder](day10/day10.md).
 #### Portfolio Interface:
 ![Portfolio Preview](day10/portfolio_screenshot.jpg)
 
+## Day 11
+
+* Explored ATS Resume Optimization and Keyword Matching strategies
+* Conducted a gap analysis against a District Software Developer job description
+* Identified critical missing skills (PostgreSQL, MongoDB, and FinTech domain context)
+* Formulated an optimization plan to improve the ATS score from 74/100 to 85+ by adding Node.js depth and database integration
+
+### Day 11 Documentation
+Detailed documentation, gap analysis, and the ATS screenshots are located in the [Day 11 Folder](day11/day11.md).
+
+#### ATS Score Overview:
+![ATS Match Score Light](day11/ats_score.jpg)
+![ATS Match Score Dark](day11/ats_score_dark.png)
+
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
 * **Challenge Repository:** https://github.com/Rajeshydv07/60-day-claude-challenge-
+
 
 
 
