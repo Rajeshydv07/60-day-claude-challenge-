@@ -160,6 +160,16 @@ Detailed documentation, gap analysis, and the ATS screenshots are located in the
 #### ATS Score Overview:
 ![ATS Match Score Light](day11/ats_score.jpg)
 ![ATS Match Score Dark](day11/ats_score_dark.png)
+## Day 12
+
+* Reviewed the **DistrictD Application Toolkit** for the Software Developer role
+* Applied 4 critical fixes: removed LeetCode URL, removed CGPA, corrected project year, and integrated Python internship
+* Rewrote project experience bullet points to emphasize QA verification, engineered validation, and data quality metrics
+* Optimized LinkedIn headline and about section to align with the target role
+* Developed a structured 30-day game plan for application submission, project upgrades, and certifications
+
+### Day 12 Documentation
+Detailed documentation is located in the [Day 12 Folder](day12/day12.md).
 
 
 ## Connect With Me
