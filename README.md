@@ -171,6 +171,46 @@ Detailed documentation, gap analysis, and the ATS screenshots are located in the
 ### Day 12 Documentation
 Detailed documentation is located in the [Day 12 Folder](day12/day12.md).
 
+## Day 13
+
+* Analyzed personalized job matching recommendations for a B.Tech IT fresher
+* Performed a comprehensive skills gap analysis mapping out required areas of improvement
+* Outlined a targeted action plan to maximize employability and keyword optimization
+* Explored active opportunities matching profile parameters (AI Data Engineer, Software Developer, Data Analyst)
+
+### Day 13 Documentation & Dashboard
+Detailed documentation and analysis are located in the [Day 13 Folder](day13/day13.md).
+
+#### Job Matching Dashboard:
+![Job Matching Dashboard](day13/job_matching_dashboard.jpg)
+
+## Day 14
+
+* Conducted a comprehensive risk assessment of the Software Developer role at DistrictD
+* Developed a visual risk-rating decision support dashboard
+* Formulated strategic interview questions to address hiring and conversion ambiguity
+* Analyzed positive signals like founder tenure and lack of employment bonds
+
+### Day 14 Documentation & Dashboard
+Detailed documentation and risk dashboard are located in the [Day 14 Folder](day14/day14.md).
+
+#### Opportunity Analysis Dashboard:
+![DistrictD Analysis Dashboard](day14/districtd_analysis.png)
+
+## Day 15
+
+* Synthesized and analyzed a personalized Vedic Astrology Reading (Lagna, Nakshatra, Mahadasha)
+* Mapped planetary alignments (like Budh-Aditya Yoga and 11th house Mars/Rahu) to CS/IT career paths
+* Formulated a 5-year career and wealth roadmap spanning 2026–2030
+* Set up standard remedies and gemstone recommendations for Mercury, Saturn, and Rahu dasha management
+
+### Day 15 Documentation & Dashboard
+Detailed documentation and astrology career analysis are located in the [Day 15 Folder](day15/day15.md).
+
+#### Vedic Astrology Reading Dashboard:
+![Vedic Astrology Reading Dashboard](day15/astrology_reading.png)
+
+
 
 ## Connect With Me
 
