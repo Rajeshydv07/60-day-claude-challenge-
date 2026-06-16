@@ -210,7 +210,22 @@ Detailed documentation and astrology career analysis are located in the [Day 15 
 #### Vedic Astrology Reading Dashboard:
 ![Vedic Astrology Reading Dashboard](day15/astrology_reading.png)
 
+## Day 16
 
+* Created a reusable Claude Custom Skill (`stock-fundamental-research`) for fundamental analysis
+* Generated structured, dashboard-like financial reports for key stocks
+* Compared TCS and Infosys side-by-side on valuation, ratios, and key strengths
+* Analyzed valuation metrics, return ratios, financial health, and shareholding patterns
+* Identified risk factors and watch-points for investment decision-making
+
+### Day 16 Documentation & Reports
+Detailed reports and stock comparisons are located in the [Day 16 Folder](day16/day16.md).
+
+#### TCS Fundamental Snapshot:
+![TCS Fundamental Snapshot](day16/screenshots/tcs-report.png)
+
+#### TCS vs Infosys Comparison:
+![TCS vs Infosys Comparison](day16/screenshots/comparison.png)
 
 ## Connect With Me
 
