@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Brain Dump Action Planner</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#e8e8e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;padding:24px;min-height:100vh}
+h1{font-size:24px;font-weight:700;color:#fff;margin-bottom:4px}
+.subtitle{font-size:13px;color:#888;margin-bottom:18px}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:8px;border:1px solid #333;background:#1a1a1a;color:#aaa;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .15s}
+.tab.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+.tab i{font-size:14px}
+
+/* Panel */
+.panel{display:none}.panel.active{display:block}
+
+/* Hero card */
+.hero{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:18px 20px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px}
+.hero-icon{background:#4f46e5;border-radius:8px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hero-icon i{color:#fff;font-size:20px}
+.hero-body{flex:1}
+.hero-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:5px}
+.hero-desc{font-size:12px;color:#9a9aaa;line-height:1.6}
+.hero-date{text-align:right;flex-shrink:0}
+.hero-date .date-box{background:#1f1f3a;border:1px solid #3a3a6a;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px}
+.hero-date i{color:#7c7cee;font-size:18px}
+.hero-date .d-num{font-size:16px;font-weight:700;color:#fff}
+.hero-date .d-label{font-size:11px;color:#888}
+
+/* Metric cards */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.mcard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.mcard .icon-wrap{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mcard .icon-wrap i{font-size:20px}
+.icon-green{background:#0d2e1a}.icon-green i{color:#22c55e}
+.icon-yellow{background:#2e2100}.icon-yellow i{color:#eab308}
+.icon-red{background:#2e0d0d}.icon-red i{color:#ef4444}
+.icon-purple{background:#1e0e3a}.icon-purple i{color:#a78bfa}
+.mcard .m-content .m-label{font-size:11px;color:#888;margin-bottom:2px}
+.mcard .m-content .m-val{font-size:26px;font-weight:700;color:#fff;line-height:1}
+.mcard .m-content .m-sub{font-size:11px;color:#666;margin-top:2px}
+
+/* Takeaway cards */
+.tk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.tk-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px;position:relative}
+.tk-card .tk-check{width:16px;height:16px;border:1.5px solid #444;border-radius:3px;margin-bottom:10px}
+.tk-card .tk-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
+.tk-card .tk-desc{font-size:12px;color:#888;line-height:1.5;margin-bottom:10px}
+.tk-card .tk-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-red{background:#2e0d0d;color:#ef4444}.badge-red::before{content:'';width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block}
+.badge-amber{background:#2e1a00;color:#f59e0b}.badge-amber::before{content:'';width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block}
+.border-green{border-left:3px solid #22c55e}
+.border-amber{border-left:3px solid #f59e0b}
+.border-blue{border-left:3px solid #60a5fa}
+.border-yellow{border-left:3px solid #eab308}
+.tk-single{grid-column:1/2}
+
+/* Action items table */
+.section-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.section-head{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#fff;margin-bottom:14px}
+.section-head i{font-size:17px;color:#aaa}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:#666;font-weight:500;padding:6px 0 10px;border-bottom:1px solid #2a2a2a}
+td{padding:10px 0;border-bottom:1px solid #222;font-size:13px;color:#ccc;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid transparent}
+.s-high{background:#2e0d0d;color:#ef4444;border-color:#4a1515}.s-high::before{content:'';width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block}
+.s-medium{background:#2e1a00;color:#f59e0b;border-color:#4a2e00}.s-medium::before{content:'';width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block}
+.s-pending{background:#1a1500;color:#ca8a04;border-color:#3a3000;display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.s-done{background:#0a1f0a;color:#22c55e;border-color:#1a3a1a;display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.cal-icon{display:inline-flex;align-items:center;gap:4px;color:#888;font-size:12px}
+.cal-icon i{font-size:13px}
+
+/* Two column layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+
+/* Questions list */
+.q-list{display:flex;flex-direction:column;gap:8px}
+.q-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#141414;border-radius:8px;font-size:12px;color:#bbb;line-height:1.5}
+.q-dot{width:22px;height:22px;border-radius:50%;background:#2a1f4a;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.q-dot i{color:#8b5cf6;font-size:12px}
+
+/* Risks */
+.risk-list{display:flex;flex-direction:column;gap:8px}
+.risk-item{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#bbb;line-height:1.5}
+.risk-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.risk-line{width:3px;border-radius:2px;height:36px;flex-shrink:0;margin-right:2px}
+.risk-red .risk-dot{background:#ef4444}.risk-red .risk-line{background:#ef4444}
+.risk-amber .risk-dot{background:#f59e0b}.risk-amber .risk-line{background:#f59e0b}
+
+/* Conflicts */
+.conflict-item{display:flex;gap:12px;padding:12px;background:#141414;border-left:2px solid #7c3aed;border-radius:0 8px 8px 0;margin-bottom:10px;font-size:12px;color:#bbb;line-height:1.6}
+.conflict-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:#2e1f00;color:#f59e0b;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap;height:fit-content;flex-shrink:0}
+
+/* Brainstorm ideas */
+.idea-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.idea-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px}
+.idea-tag{display:inline-block;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:600;margin-bottom:8px}
+.tag-blue{background:#0e2040;color:#60a5fa}
+.tag-green{background:#0a1f0a;color:#22c55e}
+.tag-amber{background:#2e1a00;color:#f59e0b}
+.tag-gray{background:#1f1f1f;color:#888}
+.idea-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:5px}
+.idea-desc{font-size:12px;color:#888;line-height:1.5}
+
+/* Speaker chips */
+.spk-self{background:#2a1f4a;color:#a78bfa;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600}
+.spk-mentor{background:#0a2a1a;color:#34d399;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600}
+.spk-interviewer{background:#2a1a00;color:#fbbf24;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600}
+
+/* Class notes takeaways */
+.class-tk{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.class-tk-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:13px}
+.class-tk-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:5px}
+.class-tk-desc{font-size:12px;color:#888;line-height:1.5}
+code{background:#2a2a2a;padding:1px 6px;border-radius:4px;font-size:11px;color:#a5f3fc;font-family:monospace}
+
+@media(max-width:640px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .tk-grid{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  .idea-grid{grid-template-columns:1fr}
+  .class-tk{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<h1>Brain Dump Action Planner</h1>
+<div class="subtitle">4 note formats parsed &bull; Meeting Notes &bull; Brainstorming &bull; Voice Memo &bull; Class Notes</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="sw('meeting',this)"><i class="ti ti-layout-board"></i> Meeting Notes</button>
+  <button class="tab" onclick="sw('brainstorm',this)"><i class="ti ti-bulb"></i> Brainstorming</button>
+  <button class="tab" onclick="sw('voice',this)"><i class="ti ti-microphone"></i> Voice Memo</button>
+  <button class="tab" onclick="sw('class',this)"><i class="ti ti-school"></i> Class Notes</button>
+</div>
+
+<!-- ===== MEETING NOTES ===== -->
+<div id="meeting" class="panel active">
+
+  <div class="hero">
+    <div class="hero-icon"><i class="ti ti-file-description"></i></div>
+    <div class="hero-body">
+      <div class="hero-title">Sprint Planning Meeting — Q3 FinTech Dashboard</div>
+      <div class="hero-desc">Team sync between product, engineering, and design to finalize sprint 7 scope. Discussed API integration delays, revised launch date, and ownership of pending UI components. 3 blockers identified, 2 conflicts unresolved.</div>
+    </div>
+    <div class="hero-date">
+      <div class="date-box">
+        <i class="ti ti-calendar-event"></i>
+        <div>
+          <div style="display:flex;align-items:baseline;gap:4px"><span class="d-num">May 18, 2025</span></div>
+          <div class="d-label">Meeting Date</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="mcard">
+      <div class="icon-wrap icon-green"><i class="ti ti-list-check"></i></div>
+      <div class="m-content">
+        <div class="m-label">Action Items</div>
+        <div class="m-val">6</div>
+        <div class="m-sub">Total tasks to complete</div>
+      </div>
+    </div>
+    <div class="mcard">
+      <div class="icon-wrap icon-yellow"><i class="ti ti-question-mark"></i></div>
+      <div class="m-content">
+        <div class="m-label">Open Questions</div>
+        <div class="m-val">4</div>
+        <div class="m-sub">Need clarification</div>
+      </div>
+    </div>
+    <div class="mcard">
+      <div class="icon-wrap icon-red"><i class="ti ti-alert-triangle"></i></div>
+      <div class="m-content">
+        <div class="m-label">Blockers</div>
+        <div class="m-val">3</div>
+        <div class="m-sub">Blocking progress</div>
+      </div>
+    </div>
+    <div class="mcard">
+      <div class="icon-wrap icon-purple"><i class="ti ti-users"></i></div>
+      <div class="m-content">
+        <div class="m-label">Conflicts</div>
+        <div class="m-val">2</div>
+        <div class="m-sub">Need resolution</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tk-grid">
+    <div class="tk-card border-green">
+      <div class="tk-check"></div>
+      <div class="tk-title">Launch pushed to Aug 15</div>
+      <div class="tk-desc">API dependency from vendor not resolved; date revised from Aug 1.</div>
+      <span class="tk-badge badge-red">High Impact</span>
+    </div>
+    <div class="tk-card border-amber">
+      <div class="tk-check"></div>
+      <div class="tk-title">Charts module reassigned</div>
+      <div class="tk-desc">Aryan takes over charts component from Priya due to bandwidth conflict.</div>
+      <span class="tk-badge badge-amber">Medium Impact</span>
+    </div>
+    <div class="tk-card border-blue">
+      <div class="tk-check"></div>
+      <div class="tk-title">Auth module incomplete</div>
+      <div class="tk-desc">JWT refresh token logic not yet finalized. Blocks QA.</div>
+      <span class="tk-badge badge-red">High Impact</span>
+    </div>
+  </div>
+  <div style="margin-bottom:16px">
+    <div class="tk-card border-yellow tk-single" style="max-width:33%">
+      <div class="tk-check"></div>
+      <div class="tk-title">Mobile breakpoints TBD</div>
+      <div class="tk-desc">Design hasn't confirmed responsive specs for tablet view.</div>
+      <span class="tk-badge badge-amber">Medium Impact</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><i class="ti ti-layout-list"></i> Action items</div>
+    <table>
+      <thead><tr><th>Task</th><th>Owner</th><th>Deadline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Finalize JWT refresh token logic</td>
+          <td>Rahul</td>
+          <td><span class="cal-icon"><i class="ti ti-calendar"></i> Jun 22</span></td>
+          <td><span class="status-badge s-high">High Priority</span></td>
+        </tr>
+        <tr>
+          <td>Complete charts component</td>
+          <td>Aryan</td>
+          <td><span class="cal-icon"><i class="ti ti-calendar"></i> Jun 24</span></td>
+          <td><span class="status-badge s-medium">Medium Priority</span></td>
+        </tr>
+        <tr>
+          <td>Confirm tablet breakpoints with design</td>
+          <td>Priya</td>
+          <td><span class="cal-icon"><i class="ti ti-calendar"></i> Jun 21</span></td>
+          <td><span class="status-badge s-high">High Priority</span></td>
+        </tr>
+        <tr>
+          <td>Follow up with vendor on API ETA</td>
+          <td>Neha (PM)</td>
+          <td><span class="cal-icon"><i class="ti ti-calendar"></i> Jun 19</span></td>
+          <td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td>
+        </tr>
+        <tr>
+          <td>Write unit tests for auth module</td>
+          <td>Rahul</td>
+          <td><span class="cal-icon"><i class="ti ti-calendar"></i> Jun 25</span></td>
+          <td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td>
+        </tr>
+        <tr>
+          <td>Update sprint board with revised dates</td>
+          <td>Neha (PM)</td>
+          <td><span class="cal-icon"><i class="ti ti-calendar"></i> Jun 19</span></td>
+          <td><span class="s-done"><i class="ti ti-circle-check"></i> Completed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="two-col">
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-question-mark"></i> Open questions</div>
+      <div class="q-list">
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Will vendor API support OAuth 2.0 or custom tokens?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Is dark mode in scope for sprint 7?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Who owns end-to-end QA sign-off?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Is the Aug 15 date hard or soft deadline?</div>
+      </div>
+    </div>
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-alert-triangle"></i> Risks / blockers</div>
+      <div class="risk-list">
+        <div class="risk-item risk-red"><div class="risk-line"></div><div class="risk-dot"></div><span>Vendor API delay blocks 3 features from being tested</span></div>
+        <div class="risk-item risk-red"><div class="risk-line"></div><div class="risk-dot"></div><span>Auth module incomplete — QA cannot start</span></div>
+        <div class="risk-item risk-amber"><div class="risk-line"></div><div class="risk-dot"></div><span>Design specs missing for tablet — dev may need to guess</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card" style="margin-top:14px">
+    <div class="section-head"><i class="ti ti-users"></i> Conflicts</div>
+    <div class="conflict-item">
+      <span class="conflict-badge"><i class="ti ti-alert-triangle" style="font-size:12px"></i> Conflict</span>
+      <span>Priya listed as owner for both charts component AND design specs review — bandwidth conflict flagged, not resolved.</span>
+    </div>
+    <div class="conflict-item" style="margin-bottom:0">
+      <span class="conflict-badge"><i class="ti ti-alert-triangle" style="font-size:12px"></i> Conflict</span>
+      <span>Launch date: Product says Aug 15 (soft), Engineering says Aug 15 (hard). Interpretation differs — decision not made.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BRAINSTORMING ===== -->
+<div id="brainstorm" class="panel">
+  <div class="hero">
+    <div class="hero-icon" style="background:#d97706"><i class="ti ti-bulb"></i></div>
+    <div class="hero-body">
+      <div class="hero-title">Brainstorming — AI Chatbot Feature Ideas (Project Batch)</div>
+      <div class="hero-desc">Raw ideation session from a student AI/ML project batch. Ideas for a RAG-based study assistant, quiz generator, and learning tracker surfaced. No final decisions made. Multiple ideas need scoping and feasibility check.</div>
+    </div>
+  </div>
+  <div class="metrics">
+    <div class="mcard"><div class="icon-wrap icon-yellow"><i class="ti ti-bulb"></i></div><div class="m-content"><div class="m-label">Ideas Generated</div><div class="m-val">8</div><div class="m-sub">Total ideas surfaced</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-green"><i class="ti ti-list-check"></i></div><div class="m-content"><div class="m-label">Action Items</div><div class="m-val">4</div><div class="m-sub">Pending tasks</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-yellow"><i class="ti ti-question-mark"></i></div><div class="m-content"><div class="m-label">Open Questions</div><div class="m-val">5</div><div class="m-sub">Need clarification</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-red"><i class="ti ti-alert-triangle"></i></div><div class="m-content"><div class="m-label">Risks</div><div class="m-val">2</div><div class="m-sub">Need attention</div></div></div>
+  </div>
+  <div class="idea-grid">
+    <div class="idea-card"><span class="idea-tag tag-blue">Top Idea</span><div class="idea-title">RAG-based Study Assistant</div><div class="idea-desc">PDF upload + Q&A using LangChain + Gemini API</div></div>
+    <div class="idea-card"><span class="idea-tag tag-green">Feasible</span><div class="idea-title">Quiz Generator</div><div class="idea-desc">Notes-to-MCQ using Scikit-learn + spaCy for NLP extraction</div></div>
+    <div class="idea-card"><span class="idea-tag tag-amber">Needs Scoping</span><div class="idea-title">Learning Streak Tracker</div><div class="idea-desc">Gamification + Firebase backend suggested</div></div>
+    <div class="idea-card"><span class="idea-tag tag-gray">Low Priority</span><div class="idea-title">Voice Input Chatbot</div><div class="idea-desc">Whisper API — considered complex for current batch</div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><i class="ti ti-list-check"></i> Action items</div>
+    <table>
+      <thead><tr><th>Task</th><th>Owner</th><th>Deadline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Build RAG prototype with LangChain + Gemini API</td><td style="color:#666">Not specified</td><td style="color:#666">Not specified</td><td><span class="status-badge s-high">High Priority</span></td></tr>
+        <tr><td>Evaluate Hugging Face vs Gemini for quiz gen</td><td style="color:#666">Not specified</td><td style="color:#666">Not specified</td><td><span class="status-badge s-medium">Medium Priority</span></td></tr>
+        <tr><td>Wireframe the study assistant UI</td><td style="color:#666">Not specified</td><td style="color:#666">Not specified</td><td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td></tr>
+        <tr><td>Check GPU availability for model inference</td><td style="color:#666">Not specified</td><td style="color:#666">Not specified</td><td><span class="status-badge s-medium">Medium Priority</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="two-col">
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-question-mark"></i> Open questions</div>
+      <div class="q-list">
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Use Gemini API or local model for RAG?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Is Firebase free tier enough for MVP?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Should quiz gen support MCQ only or also long-answer?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Will the project be deployed publicly?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>One project per team or individual?</div>
+      </div>
+    </div>
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-alert-triangle"></i> Risks</div>
+      <div class="risk-list">
+        <div class="risk-item risk-red"><div class="risk-line"></div><div class="risk-dot"></div><span>API rate limits on Gemini free tier may block testing at scale</span></div>
+        <div class="risk-item risk-amber"><div class="risk-line"></div><div class="risk-dot"></div><span>No GPU access confirmed — inference speed may be a bottleneck</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VOICE MEMO ===== -->
+<div id="voice" class="panel">
+  <div class="hero">
+    <div class="hero-icon" style="background:#0891b2"><i class="ti ti-microphone"></i></div>
+    <div class="hero-body">
+      <div class="hero-title">Voice Memo — Pre-Interview Prep (DistrictD FinTech Internship)</div>
+      <div class="hero-desc">Self-recorded voice memo before a DistrictD Software Developer internship interview. 3 speakers: Self (monologue), Mentor (quoted advice), Interviewer (anticipated questions).</div>
+    </div>
+  </div>
+  <div class="metrics">
+    <div class="mcard"><div class="icon-wrap icon-purple"><i class="ti ti-users"></i></div><div class="m-content"><div class="m-label">Speakers</div><div class="m-val">3</div><div class="m-sub">Inferred from transcript</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-green"><i class="ti ti-list-check"></i></div><div class="m-content"><div class="m-label">Action Items</div><div class="m-val">5</div><div class="m-sub">Before/during interview</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-yellow"><i class="ti ti-question-mark"></i></div><div class="m-content"><div class="m-label">Open Questions</div><div class="m-val">4</div><div class="m-sub">Need clarification</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-red"><i class="ti ti-alert-triangle"></i></div><div class="m-content"><div class="m-label">Risks</div><div class="m-val">3</div><div class="m-sub">Identified concerns</div></div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><i class="ti ti-users"></i> Speaker summary</div>
+    <table>
+      <thead><tr><th>Speaker</th><th>Role</th><th>Key points</th></tr></thead>
+      <tbody>
+        <tr><td><span class="spk-self">Self</span></td><td>Candidate (monologue)</td><td>Reviewing projects, rehearsing intro, listing questions to ask recruiter</td></tr>
+        <tr><td><span class="spk-mentor">Mentor</span></td><td>Quoted advice</td><td>"Ask about conversion rate from intern to full-time before anything else"</td></tr>
+        <tr><td><span class="spk-interviewer">Interviewer</span></td><td>Anticipated questions</td><td>Expected: explain your projects, why FinTech, stack experience</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><i class="ti ti-list-check"></i> Action items by speaker</div>
+    <table>
+      <thead><tr><th>Task</th><th>Speaker</th><th>Timing</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Rehearse TechNova Solutions project walkthrough (2026)</td><td><span class="spk-self">Self</span></td><td>Before interview</td><td><span class="status-badge s-high">High Priority</span></td></tr>
+        <tr><td>Prepare answer for "why FinTech" question</td><td><span class="spk-self">Self</span></td><td>Before interview</td><td><span class="status-badge s-high">High Priority</span></td></tr>
+        <tr><td>Ask recruiter about internship-to-fulltime conversion rate</td><td><span class="spk-self">Self</span></td><td>During interview</td><td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td></tr>
+        <tr><td>Confirm tech stack used at DistrictD</td><td><span class="spk-self">Self</span></td><td>During interview</td><td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td></tr>
+        <tr><td>Review mentor's tip on role scope clarification</td><td><span class="spk-self">Self</span></td><td>Before interview</td><td><span class="s-done"><i class="ti ti-circle-check"></i> Completed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="two-col">
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-question-mark"></i> Open questions</div>
+      <div class="q-list">
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>What is DistrictD's intern-to-full-time conversion rate?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Is the role frontend-heavy or full-stack?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Will there be a live coding round?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Is stipend mentioned anywhere in the JD?</div>
+      </div>
+    </div>
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-shield-exclamation"></i> Risks</div>
+      <div class="risk-list">
+        <div class="risk-item risk-red"><div class="risk-line"></div><div class="risk-dot"></div><span>No clarity on role scope — could be misaligned with expectations</span></div>
+        <div class="risk-item risk-amber"><div class="risk-line"></div><div class="risk-dot"></div><span>Live DSA round not confirmed but possible — prep may be insufficient</span></div>
+        <div class="risk-item" style="display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#bbb"><div style="width:3px;border-radius:2px;height:36px;background:#22c55e;flex-shrink:0;margin-right:2px"></div><div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:2px"></div><span>Mentor advice may not apply to FinTech startup context</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLASS NOTES ===== -->
+<div id="class" class="panel">
+  <div class="hero">
+    <div class="hero-icon" style="background:#059669"><i class="ti ti-school"></i></div>
+    <div class="hero-body">
+      <div class="hero-title">Class Notes — Machine Learning: Random Forest &amp; Ensemble Methods</div>
+      <div class="hero-desc">Lecture notes from an ML class covering Random Forest algorithm, bagging vs boosting, and model evaluation. Assignment due next week. Two concepts marked as unclear. Key formula noted for exam.</div>
+    </div>
+  </div>
+  <div class="metrics">
+    <div class="mcard"><div class="icon-wrap icon-green"><i class="ti ti-book"></i></div><div class="m-content"><div class="m-label">Topics Covered</div><div class="m-val">4</div><div class="m-sub">Lecture topics</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-green"><i class="ti ti-list-check"></i></div><div class="m-content"><div class="m-label">Action Items</div><div class="m-val">4</div><div class="m-sub">Study tasks</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-yellow"><i class="ti ti-question-mark"></i></div><div class="m-content"><div class="m-label">Open Questions</div><div class="m-val">3</div><div class="m-sub">Concepts unclear</div></div></div>
+    <div class="mcard"><div class="icon-wrap icon-red"><i class="ti ti-alert-circle"></i></div><div class="m-content"><div class="m-label">Conflicts</div><div class="m-val">1</div><div class="m-sub">Slide vs lecture</div></div></div>
+  </div>
+  <div class="class-tk">
+    <div class="class-tk-card"><div class="class-tk-title">Random Forest = bagging of decision trees</div><div class="class-tk-desc">Each tree trains on a random subset of data + features. Reduces overfitting.</div></div>
+    <div class="class-tk-card"><div class="class-tk-title">OOB Error</div><div class="class-tk-desc">Out-of-bag error used as internal validation. No need for separate validation set.</div></div>
+    <div class="class-tk-card"><div class="class-tk-title">Feature importance via Gini impurity</div><div class="class-tk-desc">RF ranks features by how much they reduce impurity across all trees.</div></div>
+    <div class="class-tk-card"><div class="class-tk-title">Bagging vs Boosting</div><div class="class-tk-desc">Bagging: parallel, reduces variance. Boosting: sequential, reduces bias. Prof said boosting often outperforms but is slower.</div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><i class="ti ti-list-check"></i> Action items</div>
+    <table>
+      <thead><tr><th>Task</th><th>Owner</th><th>Deadline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Implement Random Forest on Mental Health dataset (88% baseline to beat)</td><td>Self</td><td>Next class</td><td><span class="status-badge s-high">High Priority</span></td></tr>
+        <tr><td>Read Chapter 7 — Ensemble Methods</td><td>Self</td><td style="color:#666">Not specified</td><td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td></tr>
+        <tr><td>Clarify OOB error formula with professor</td><td>Self</td><td>Office hours</td><td><span style="background:#1e0e3a;color:#a78bfa;border:1px solid #3a2a6a;display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600"><i class="ti ti-question-mark" style="font-size:12px"></i> Open Question</span></td></tr>
+        <tr><td>Revise Gini impurity derivation for exam</td><td>Self</td><td style="color:#666">Not specified</td><td><span class="s-pending"><i class="ti ti-hourglass"></i> Pending</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="two-col">
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-question-mark"></i> Open questions</div>
+      <div class="q-list">
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Is OOB error equivalent to cross-validation accuracy?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>When to prefer XGBoost over vanilla RF?</div>
+        <div class="q-item"><div class="q-dot"><i class="ti ti-question-mark"></i></div>Does feature importance change with n_estimators?</div>
+      </div>
+    </div>
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-head"><i class="ti ti-alert-circle"></i> Conflict</div>
+      <div class="conflict-item" style="margin-bottom:0">
+        <span class="conflict-badge"><i class="ti ti-alert-triangle" style="font-size:12px"></i> Conflict</span>
+        <span>Slide 12 says "boosting always outperforms bagging" — but lecture notes say "often outperforms, not always." Contradiction not resolved in class.</span>
+      </div>
+    </div>
+  </div>
+  <div class="section-card" style="margin-top:14px">
+    <div class="section-head"><i class="ti ti-notes"></i> Additional notes</div>
+    <div style="font-size:13px;color:#888;line-height:1.7">
+      Prof mentioned XGBoost and LightGBM as real-world boosting implementations — may appear in exam. Scikit-learn's <code>RandomForestClassifier</code> defaults: n_estimators=100, max_depth=None. Assignment dataset not yet shared — check portal.
+    </div>
+  </div>
+</div>
+
+<script>
+function sw(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

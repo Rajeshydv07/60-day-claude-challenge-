@@ -227,6 +227,32 @@ Detailed reports and stock comparisons are located in the [Day 16 Folder](day16/
 #### TCS vs Infosys Comparison:
 ![TCS vs Infosys Comparison](day16/screenshots/comparison.png)
 
+## Day 17
+
+* Built an interactive **Vehicle Cost Analysis Dashboard** using HTML, CSS, JavaScript, and SVG visualizations.
+* Analyzed vehicle operating costs, fuel efficiency, maintenance expenses, and refueling times.
+* Evaluated E85 fuel economics and break-even calculations using a vehicle cost dataset.
+* Designed a responsive glassmorphism UI with animated SVG gauge charts.
+
+### Day 17 Documentation & Dashboard
+Detailed documentation and analysis are located in the [Day 17 Folder](day17/day17.md).
+
+#### Vehicle Cost Analysis Dashboard:
+![Vehicle Cost Analysis Dashboard](day17/screenshot1.png)
+
+## Day 18
+
+* Created a reusable Claude Custom Skill (`brain-dump-action-planner`) to convert messy notes, transcripts, and brainstorming logs into structured action dashboards.
+* Built capabilities for summarizing large notes, extracting key takeaways, tracking action items, and identifying risks/blockers.
+* Integrated support for speaker-based **Transcript Mode** and multi-source **Merge Mode** (supporting duplicate detection and conflict review).
+* Generated clean, professional HTML dashboards using color-coded status and priority badges.
+
+### Day 18 Documentation & Dashboards
+Detailed documentation is located in the [Day 18 Folder](day18/day18.md).
+
+#### Brain Dump Action Planner Dashboard:
+![Brain Dump Action Planner Dashboard](day18/dashboard-output.png)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
