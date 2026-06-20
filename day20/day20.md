@@ -5,6 +5,7 @@
 On Day 20, I built **Face Puzzle**, an interactive web-based puzzle game that uses the camera to capture a user's face, dynamically breaks it into puzzle pieces, scrambles them, and challenges the user to assemble them back. It features full touch and drag-and-drop gameplay, performance timers, move counters, and a persistence-based local leaderboard.
 
 ![Face Puzzle Interface](screenshot.png)
+![Puzzle Solved & Leaderboard](solved.png)
 
 ---
 
@@ -55,6 +56,7 @@ On Day 20, I built **Face Puzzle**, an interactive web-based puzzle game that us
 day20/
 ├── face_puzzle.html
 ├── screenshot.png
+├── solved.png
 └── day20.md
 ```
 
