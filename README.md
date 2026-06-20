@@ -266,6 +266,19 @@ Detailed profile information is located in the [Day 19 Folder](day19/day19.md).
 #### Football Intelligence Profile Dashboard:
 ![Football Intelligence Profile Dashboard](day19/football-intelligence-profile.jpg)
 
+## Day 20
+
+* Built **Face Puzzle** — a webcam-based sliding puzzle game.
+* Implemented camera access, cropping, and real-time canvas-slicing logic.
+* Supported flexible grid sizes (3x3, 4x4, 5x5) and unified mouse/touch drag events.
+* Created an active HUD (tracking moves, elapsed time, solved state check) and local leaderboard storage.
+
+### Day 20 Documentation & Game
+Detailed game info is located in the [Day 20 Folder](day20/day20.md).
+
+#### Face Puzzle Gameplay Interface:
+![Face Puzzle Solved](day20/screenshot.png)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07
