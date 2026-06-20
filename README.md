@@ -279,6 +279,19 @@ Detailed game info is located in the [Day 20 Folder](day20/day20.md).
 #### Face Puzzle Gameplay Interface:
 ![Face Puzzle Solved](day20/screenshot.png)
 
+## Day 21
+
+* Built an interactive **Digital Footprint Report & Privacy Dashboard** visualizing user exposure.
+* Designed a responsive 3-column layout organizing tracking surface, corporate concentration, risk analysis, and profiles.
+* Styled the dashboard in a sleek midnight slate dark mode using the Inter font and Tabler Icons library.
+* Implemented an interactive JavaScript Privacy Action Plan score simulator that calculates potential privacy score improvements in real-time.
+
+### Day 21 Documentation & Dashboard
+Detailed documentation is located in the [Day 21 Folder](day21/day21.md).
+
+#### Digital Footprint Report Dashboard:
+![Digital Footprint Dashboard](day21/screenshot.png)
+
 ## Connect With Me
 
 * **GitHub Profile:** https://github.com/Rajeshydv07

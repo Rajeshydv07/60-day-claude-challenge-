@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Footprint Report & Privacy Dashboard</title>
+  <!-- Google Fonts (Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  
+  <style>
+    :root {
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --bg-primary: #090d16;
+      --card-bg: #111622;
+      --inner-card-bg: #171e2e;
+      --border-color: #1e2838;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-tertiary: #64748b;
+      
+      --color-danger: #ef4444;
+      --color-danger-dim: #ef444422;
+      --color-danger-border: #ef444444;
+      
+      --color-warn: #f97316;
+      --color-warn-dim: #f9731622;
+      --color-warn-border: #f9731644;
+      
+      --color-yellow: #eab308;
+      --color-yellow-dim: #eab30822;
+      --color-yellow-border: #eab30844;
+      
+      --color-ok: #22c55e;
+      --color-ok-dim: #22c55e22;
+      --color-ok-border: #22c55e44;
+      
+      --color-info: #3b82f6;
+      --color-info-dim: #3b82f622;
+      --color-info-border: #3b82f644;
+      
+      --border-radius-lg: 16px;
+      --border-radius-md: 10px;
+      --border-radius-sm: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    .dashboard-container {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .dot-separator {
+      color: var(--text-tertiary);
+    }
+
+    /* Overview Metric Cards Row */
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .metric-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .metric-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .metric-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    }
+
+    .metric-card-orange { border-color: var(--color-warn); box-shadow: 0 0 12px rgba(249, 115, 22, 0.1); }
+    .metric-card-yellow { border-color: var(--color-yellow); box-shadow: 0 0 12px rgba(234, 179, 8, 0.1); }
+    .metric-card-blue { border-color: var(--color-info); box-shadow: 0 0 12px rgba(59, 130, 246, 0.1); }
+    .metric-card-green { border-color: var(--color-ok); box-shadow: 0 0 12px rgba(34, 197, 94, 0.1); }
+    .metric-card-red { border-color: var(--color-danger); box-shadow: 0 0 12px rgba(239, 68, 68, 0.1); }
+
+    .metric-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .metric-card-orange .metric-value { color: var(--color-warn); }
+    .metric-card-yellow .metric-value { color: var(--color-yellow); }
+    .metric-card-blue .metric-value { color: var(--color-info); }
+    .metric-card-green .metric-value { color: var(--color-ok); }
+    .metric-card-red .metric-value { color: var(--color-danger); }
+
+    .metric-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    /* Dashboard Columns Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dashboard-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: 1.5rem;
+      height: fit-content;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      border-left: 3px solid var(--color-info);
+      padding-left: 8px;
+    }
+
+    .card-subtitle-small {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Heatmap Grid */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .heat-cell {
+      border-radius: var(--border-radius-md);
+      padding: 10px 8px;
+      font-size: 0.8rem;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .cell-critical {
+      background-color: var(--color-danger-dim);
+      border-color: var(--color-danger-border);
+      color: var(--color-danger);
+    }
+    .cell-high {
+      background-color: var(--color-warn-dim);
+      border-color: var(--color-warn-border);
+      color: var(--color-warn);
+    }
+    .cell-medium {
+      background-color: var(--color-yellow-dim);
+      border-color: var(--color-yellow-border);
+      color: var(--color-yellow);
+    }
+    .cell-lower {
+      background-color: var(--color-ok-dim);
+      border-color: var(--color-ok-border);
+      color: var(--color-ok);
+    }
+
+    .cell-sub {
+      font-weight: 400;
+      font-size: 0.7rem;
+      opacity: 0.8;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .card-footer {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: 1rem;
+      line-height: 1.4;
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .tag-danger { background-color: var(--color-danger-dim); color: var(--color-danger); border: 1px solid var(--color-danger-border); }
+    .tag-warn { background-color: var(--color-warn-dim); color: var(--color-warn); border: 1px solid var(--color-warn-border); }
+    .tag-info { background-color: var(--color-info-dim); color: var(--color-info); border: 1px solid var(--color-info-border); }
+    .tag-ok { background-color: var(--color-ok-dim); color: var(--color-ok); border: 1px solid var(--color-ok-border); }
+    .tag-neutral { background-color: var(--inner-card-bg); color: var(--text-secondary); border: 1px solid var(--border-color); }
+    .tag-warn-outline { border: 1px solid var(--color-yellow-border); color: var(--color-yellow); padding: 4px 10px; font-weight: 500; font-size: 0.75rem; background: transparent; }
+
+    /* Progress bars / Risk Radar */
+    .bar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bar-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      width: 110px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background-color: var(--inner-card-bg);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fill-red { background-color: var(--color-danger); }
+    .fill-orange { background-color: var(--color-warn); }
+    .fill-yellow { background-color: var(--color-yellow); }
+    .fill-green { background-color: var(--color-ok); }
+    .fill-blue { background-color: var(--color-info); }
+
+    .bar-pct {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      width: 32px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Company Exposure Ranking */
+    .company-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .company-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .company-row:last-child {
+      border-bottom: none;
+    }
+
+    .company-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--border-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      background-color: var(--inner-card-bg);
+      border: 1px solid var(--border-color);
+    }
+
+    .logo-google { color: #3b82f6; }
+    .logo-meta { color: #1877f2; }
+    .logo-bytedance { color: #fe2c55; }
+    .logo-apple { color: #f8fafc; }
+    .logo-snap { color: #fffc00; }
+    .logo-amazon { color: #ff9900; }
+    .logo-meesho { color: #ff4550; }
+
+    .company-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .company-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .company-desc {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .small-track {
+      width: 80px;
+      flex: none;
+    }
+    @media (max-width: 480px) {
+      .small-track {
+        display: none;
+      }
+    }
+
+    /* Data collection matrix table */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .matrix-table th {
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 8px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .matrix-table td {
+      padding: 8px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    .matrix-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .service-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-red { background-color: var(--color-danger); }
+    .dot-orange { background-color: var(--color-warn); }
+    .dot-gray { background-color: var(--text-tertiary); opacity: 0.4; }
+
+    .matrix-legend {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Digital Twin Traits */
+    .twin-traits {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .twin-trait-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .twin-trait-row:last-child {
+      border-bottom: none;
+    }
+
+    .trait-name {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Valuable Assets */
+    .asset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .asset-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .asset-row:last-child {
+      border-bottom: none;
+    }
+
+    .asset-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: var(--inner-card-bg);
+      border: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .asset-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .asset-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .asset-desc {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Privacy Action Plan & Simulator */
+    .simulator-intro {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .action-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--inner-card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding-left: 28px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      user-select: none;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkmark {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      height: 18px;
+      width: 18px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-container:hover input ~ .checkmark {
+      border-color: var(--color-info);
+    }
+
+    .checkbox-container input:checked ~ .checkmark {
+      background-color: var(--color-info);
+      border-color: var(--color-info);
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .checkbox-container input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    .checkbox-container .checkmark:after {
+      left: 6px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .action-text {
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pts-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-ok);
+      background-color: var(--color-ok-dim);
+      border: 1px solid var(--color-ok-border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .simulator-score-panel {
+      border-top: 1px solid var(--border-color);
+      padding-top: 12px;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+
+    .score-line-label {
+      color: var(--text-secondary);
+    }
+
+    .score-line-val {
+      font-weight: 600;
+    }
+
+    .score-green {
+      color: var(--color-ok);
+    }
+
+    .sim-progress-outer {
+      height: 8px;
+      background-color: var(--inner-card-bg);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .sim-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background-color: var(--color-info);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Bottom Grid layout */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) {
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* WOW Insights */
+    .wow-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wow-card {
+      background-color: var(--inner-card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 12px 14px;
+    }
+
+    .wow-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-primary);
+    }
+    .wow-title i {
+      font-size: 1rem;
+    }
+    .wow-title .ti-eye, .wow-title .ti-alert-triangle, .wow-title .ti-camera {
+      color: var(--color-warn);
+    }
+    .wow-title .ti-link {
+      color: var(--color-info);
+    }
+    .wow-title .ti-device-gamepad-2 {
+      color: #a78bfa;
+    }
+
+    .wow-desc {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Final Verdict section */
+    .verdict-card-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .verdict-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .verdict-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .verdict-bar-container {
+      margin: 8px 0;
+    }
+
+    .verdict-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--color-ok), var(--color-yellow), var(--color-warn), var(--color-danger));
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .verdict-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: var(--text-primary);
+      border: 2px solid var(--color-danger);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .verdict-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .verdict-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .verdict-risk-box {
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+      border: 1px solid transparent;
+    }
+
+    .bg-red-dim {
+      background-color: var(--color-danger-dim);
+      border-color: var(--color-danger-border);
+    }
+    .bg-green-dim {
+      background-color: var(--color-ok-dim);
+      border-color: var(--color-ok-border);
+    }
+
+    .box-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .text-red { color: var(--color-danger); }
+    .text-green { color: var(--color-ok); }
+
+    .box-content {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .verdict-footer {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+      border-top: 1px solid var(--border-color);
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>Digital Footprint Report</h1>
+      </div>
+      <div class="header-right">
+        <span>15 Services</span>
+        <span class="dot-separator">•</span>
+        <span>7 Parent Companies</span>
+        <span class="dot-separator">•</span>
+        <span class="tag tag-warn-outline">All inferences are estimates, not verified facts</span>
+      </div>
+    </header>
+
+    <!-- Overview Metric Cards Row -->
+    <div class="metric-row">
+      <!-- Card 1: Footprint score -->
+      <div class="metric-card metric-card-orange">
+        <div class="metric-value">74</div>
+        <div class="metric-label">Significant</div>
+      </div>
+      <!-- Card 2: Privacy score -->
+      <div class="metric-card metric-card-yellow">
+        <div class="metric-value" id="current-score-card">34</div>
+        <div class="metric-label" id="current-rating-card">Fair</div>
+      </div>
+      <!-- Card 3: Apps Tracked -->
+      <div class="metric-card metric-card-blue">
+        <div class="metric-value">15</div>
+        <div class="metric-label">Apps tracked</div>
+      </div>
+      <!-- Card 4: Parent entities -->
+      <div class="metric-card metric-card-green">
+        <div class="metric-value">7</div>
+        <div class="metric-label">Parent entities</div>
+      </div>
+      <!-- Card 5: Estimated reach -->
+      <div class="metric-card metric-card-red">
+        <div class="metric-value">11/15</div>
+        <div class="metric-label">Estimated reach</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Columns Grid -->
+    <div class="dashboard-grid">
+      <!-- COLUMN 1: Exposure Heatmap & Risk Radar -->
+      <div class="dashboard-col">
+        <!-- Exposure Heatmap -->
+        <div class="card">
+          <div class="section-label">Exposure Heatmap</div>
+          <div class="heatmap-grid">
+            <div class="heat-cell cell-critical">Identity data<br><span class="cell-sub">Critical</span></div>
+            <div class="heat-cell cell-critical">Location traces<br><span class="cell-sub">Critical</span></div>
+            <div class="heat-cell cell-critical">Behaviour patterns<br><span class="cell-sub">Critical</span></div>
+            <div class="heat-cell cell-high">Financial signals<br><span class="cell-sub">High</span></div>
+            <div class="heat-cell cell-high">Social graph<br><span class="cell-sub">High</span></div>
+            <div class="heat-cell cell-high">Content consumption<br><span class="cell-sub">High</span></div>
+            <div class="heat-cell cell-medium">Purchase intent<br><span class="cell-sub">Medium</span></div>
+            <div class="heat-cell cell-medium">Voice/audio<br><span class="cell-sub">Medium</span></div>
+            <div class="heat-cell cell-medium">Device fingerprint<br><span class="cell-sub">Medium</span></div>
+            <div class="heat-cell cell-lower">Health proxies<br><span class="cell-sub">Lower</span></div>
+            <div class="heat-cell cell-lower">Political signals<br><span class="cell-sub">Lower</span></div>
+            <div class="heat-cell cell-lower">Biometric data<br><span class="cell-sub">Lower</span></div>
+          </div>
+          <div class="card-footer">Intensity based on number of services likely collecting each category. All exposure levels are estimates.</div>
+        </div>
+        
+        <!-- Risk Radar -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="section-label">Risk Radar</div>
+          <div class="bar-list">
+            <div class="bar-row">
+              <div class="bar-label">Ad profiling</div>
+              <div class="bar-track"><div class="bar-fill fill-red" style="width:95%"></div></div>
+              <div class="bar-pct">95%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Cross-platform ID</div>
+              <div class="bar-track"><div class="bar-fill fill-red" style="width:88%"></div></div>
+              <div class="bar-pct">88%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Data brokerage</div>
+              <div class="bar-track"><div class="bar-fill fill-orange" style="width:80%"></div></div>
+              <div class="bar-pct">80%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Geolocation leaks</div>
+              <div class="bar-track"><div class="bar-fill fill-orange" style="width:78%"></div></div>
+              <div class="bar-pct">78%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Social engineering</div>
+              <div class="bar-track"><div class="bar-fill fill-orange" style="width:72%"></div></div>
+              <div class="bar-pct">72%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Phishing surface</div>
+              <div class="bar-track"><div class="bar-fill fill-yellow" style="width:65%"></div></div>
+              <div class="bar-pct">65%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Account takeover</div>
+              <div class="bar-track"><div class="bar-fill fill-yellow" style="width:60%"></div></div>
+              <div class="bar-pct">60%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Biometric exposure</div>
+              <div class="bar-track"><div class="bar-fill fill-yellow" style="width:42%"></div></div>
+              <div class="bar-pct">42%</div>
+            </div>
+          </div>
+          <div class="card-footer">Scores are estimated risk likelihood, not verified incidents.</div>
+        </div>
+      </div>
+      
+      <!-- COLUMN 2: Company Ranking & Data Matrix -->
+      <div class="dashboard-col">
+        <!-- Company Ranking -->
+        <div class="card">
+          <div class="section-label">Company Exposure Ranking</div>
+          <div class="company-list">
+            <div class="company-row">
+              <div class="company-logo logo-google">G</div>
+              <div class="company-info">
+                <div class="company-name">Alphabet (Google)</div>
+                <div class="company-desc">Search · YouTube · Pay · Photos</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-red" style="width:100%"></div></div>
+              <span class="tag tag-danger">Highest</span>
+            </div>
+            <div class="company-row">
+              <div class="company-logo logo-meta">M</div>
+              <div class="company-info">
+                <div class="company-name">Meta</div>
+                <div class="company-desc">Instagram · WhatsApp</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-orange" style="width:80%"></div></div>
+              <span class="tag tag-danger">Critical</span>
+            </div>
+            <div class="company-row">
+              <div class="company-logo logo-bytedance">B</div>
+              <div class="company-info">
+                <div class="company-name">ByteDance</div>
+                <div class="company-desc">TikTok (cross-border risk)</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-orange" style="width:70%"></div></div>
+              <span class="tag tag-danger">Critical</span>
+            </div>
+            <div class="company-row">
+              <div class="company-logo logo-apple">A</div>
+              <div class="company-info">
+                <div class="company-name">Apple</div>
+                <div class="company-desc">iMessage (platform level)</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-yellow" style="width:55%"></div></div>
+              <span class="tag tag-warn">High</span>
+            </div>
+            <div class="company-row">
+              <div class="company-logo logo-snap">S</div>
+              <div class="company-info">
+                <div class="company-name">Snap Inc.</div>
+                <div class="company-desc">Snapchat</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-yellow" style="width:45%"></div></div>
+              <span class="tag tag-warn">Medium</span>
+            </div>
+            <div class="company-row">
+              <div class="company-logo logo-amazon">Az</div>
+              <div class="company-info">
+                <div class="company-name">Amazon</div>
+                <div class="company-desc">Amazon (purchase data)</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-yellow" style="width:40%"></div></div>
+              <span class="tag tag-warn">Medium</span>
+            </div>
+            <div class="company-row">
+              <div class="company-logo logo-meesho">Me</div>
+              <div class="company-info">
+                <div class="company-name">Meesho</div>
+                <div class="company-desc">Meesho (India commerce)</div>
+              </div>
+              <div class="bar-track small-track"><div class="bar-fill fill-green" style="width:28%"></div></div>
+              <span class="tag tag-ok">Lower</span>
+            </div>
+          </div>
+          <div class="card-footer">Spotify is operated by Spotify AB (Sweden), shown here under Apple device context. Discord is a standalone US company (Discord Inc.). Roblox Corp. is a standalone US public company.</div>
+        </div>
+        
+        <!-- Data collection matrix -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="section-label">Data Collection Matrix</div>
+          <div style="overflow-x: auto;">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th class="text-center">Loc</th>
+                  <th class="text-center">Contacts</th>
+                  <th class="text-center">Behaviour</th>
+                  <th class="text-center">Payments</th>
+                  <th class="text-center">Biometric</th>
+                  <th class="text-right">Risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="service-name">Google Search</td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-danger">Critical</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Instagram</td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-right"><span class="tag tag-danger">Critical</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">TikTok</td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-right"><span class="tag tag-danger">Critical</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">YouTube</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-danger">High</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">WhatsApp</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-danger">High</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Google Pay</td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-right"><span class="tag tag-danger">High</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Snapchat</td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-right"><span class="tag tag-warn">Medium</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Amazon</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-warn">Medium</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">PUBG Mobile</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-warn">Medium</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Roblox</td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-warn">Medium</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Spotify</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-warn">Medium</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Discord</td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-ok">Lower</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Google Photos</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-right"><span class="tag tag-warn">Medium</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">iMessage</td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-red"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-ok">Lower</span></td>
+                </tr>
+                <tr>
+                  <td class="service-name">Meesho</td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-orange"></span></td>
+                  <td class="text-center"><span class="dot dot-gray"></span></td>
+                  <td class="text-right"><span class="tag tag-ok">Lower</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="matrix-legend">
+            <span class="legend-item"><span class="dot dot-red"></span> High likelihood</span>
+            <span class="legend-item"><span class="dot dot-orange"></span> Moderate</span>
+            <span class="legend-item"><span class="dot dot-gray"></span> Low / not typical</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- COLUMN 3: Digital Twin & Valuable Assets & Action Plan -->
+      <div class="dashboard-col">
+        <!-- Digital Twin -->
+        <div class="card">
+          <div class="section-label">Digital Twin Profile</div>
+          <div class="card-subtitle-small">Estimates only — not verified facts</div>
+          <div class="twin-traits">
+            <div class="twin-trait-row">
+              <span class="trait-name">Age group</span>
+              <span class="tag tag-warn">16–28 est.</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Market</span>
+              <span class="tag tag-info">India (Meesho/UPI)</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Device</span>
+              <span class="tag tag-info">Android + Apple hybrid</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Entertainment</span>
+              <span class="tag tag-neutral">Short-form - Gaming - Music</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Social activity</span>
+              <span class="tag tag-danger">High — 4 social apps</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Shopping</span>
+              <span class="tag tag-warn">Mixed premium + value</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Income signal</span>
+              <span class="tag tag-warn">Mid-range (ext.)</span>
+            </div>
+            <div class="twin-trait-row">
+              <span class="trait-name">Language</span>
+              <span class="tag tag-neutral">Bilingual (EN + regional)</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Valuable Assets -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="section-label">Most Valuable Data Assets</div>
+          <div class="asset-list">
+            <div class="asset-row">
+              <div class="asset-badge">1</div>
+              <div class="asset-info">
+                <div class="asset-title">Search query history</div>
+                <div class="asset-desc">Google Search → Intent, health, politics</div>
+              </div>
+              <span class="tag tag-danger">Priceless</span>
+            </div>
+            <div class="asset-row">
+              <div class="asset-badge">2</div>
+              <div class="asset-info">
+                <div class="asset-title">Facial geometry</div>
+                <div class="asset-desc">Google Photos + Instagram (biometric)</div>
+              </div>
+              <span class="tag tag-danger">Critical</span>
+            </div>
+            <div class="asset-row">
+              <div class="asset-badge">3</div>
+              <div class="asset-info">
+                <div class="asset-title">Financial transaction graph</div>
+                <div class="asset-desc">Google Pay + Amazon + Meesho</div>
+              </div>
+              <span class="tag tag-danger">Critical</span>
+            </div>
+            <div class="asset-row">
+              <div class="asset-badge">4</div>
+              <div class="asset-info">
+                <div class="asset-title">Social connection map</div>
+                <div class="asset-desc">WhatsApp + Instagram + Discord</div>
+              </div>
+              <span class="tag tag-warn">High</span>
+            </div>
+            <div class="asset-row">
+              <div class="asset-badge">5</div>
+              <div class="asset-info">
+                <div class="asset-title">Content fingerprint</div>
+                <div class="asset-desc">YouTube + TikTok + Spotify</div>
+              </div>
+              <span class="tag tag-warn">High</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Privacy Action Plan (Simulator) -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="section-label" id="action-plan-title">Privacy Action Plan (+40 pts potential)</div>
+          <div class="simulator-intro">Estimate your privacy score improvement:</div>
+          
+          <div class="action-list">
+            <!-- Action 1 -->
+            <div class="action-row">
+              <label class="checkbox-container">
+                <input type="checkbox" class="action-checkbox" data-points="8" onchange="updateSimulator()">
+                <span class="checkmark"></span>
+                <span class="action-text">Enable 2FA on Google, Meta & Apple</span>
+              </label>
+              <span class="pts-tag">+8 pts</span>
+            </div>
+            <!-- Action 2 -->
+            <div class="action-row">
+              <label class="checkbox-container">
+                <input type="checkbox" class="action-checkbox" data-points="6" onchange="updateSimulator()">
+                <span class="checkmark"></span>
+                <span class="action-text">Delete Google Photos face grouping</span>
+              </label>
+              <span class="pts-tag">+6 pts</span>
+            </div>
+            <!-- Action 3 -->
+            <div class="action-row">
+              <label class="checkbox-container">
+                <input type="checkbox" class="action-checkbox" data-points="7" onchange="updateSimulator()">
+                <span class="checkmark"></span>
+                <span class="action-text">Turn off Google location history</span>
+              </label>
+              <span class="pts-tag">+7 pts</span>
+            </div>
+            <!-- Action 4 -->
+            <div class="action-row">
+              <label class="checkbox-container">
+                <input type="checkbox" class="action-checkbox" data-points="10" onchange="updateSimulator()">
+                <span class="checkmark"></span>
+                <span class="action-text">Restrict TikTok sharing or uninstall</span>
+              </label>
+              <span class="pts-tag">+10 pts</span>
+            </div>
+            <!-- Action 5 -->
+            <div class="action-row">
+              <label class="checkbox-container">
+                <input type="checkbox" class="action-checkbox" data-points="9" onchange="updateSimulator()">
+                <span class="checkmark"></span>
+                <span class="action-text">Audit and revoke permissions</span>
+              </label>
+              <span class="pts-tag">+9 pts</span>
+            </div>
+          </div>
+          
+          <div class="simulator-score-panel">
+            <div class="score-line">
+              <span class="score-line-label">Current Privacy Score</span>
+              <span class="score-line-val" id="sim-current-score">34 / 100</span>
+            </div>
+            <div class="score-line">
+              <span class="score-line-label">Potential Score</span>
+              <span class="score-line-val score-green" id="sim-potential-score">34 / 100</span>
+            </div>
+            <div class="sim-progress-outer">
+              <div class="sim-progress-fill" id="sim-progress-bar" style="width: 34%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SECTIONS -->
+    <div class="bottom-grid" style="margin-top: 1.5rem;">
+      <!-- WOW INSIGHTS -->
+      <div class="card">
+        <div class="section-label">Wow Insights</div>
+        <div class="wow-list">
+          <div class="wow-card">
+            <div class="wow-title"><i class="ti ti-eye"></i> Alphabet knows more than you think</div>
+            <div class="wow-desc">With Search, YouTube, Pay, and Photos — Alphabet likely holds an estimated profile covering your interests, income proxies, purchases, face-linked photos, and physical movement patterns. All four services can cross-reference your identity.</div>
+          </div>
+          <div class="wow-card">
+            <div class="wow-title"><i class="ti ti-alert-triangle"></i> TikTok is the highest cross-border risk</div>
+            <div class="wow-desc">ByteDance (China-based parent) is subject to different data governance laws. TikTok has faced regulatory scrutiny in the US, EU, and India (banned in India since 2020 — if you're using it, this is a significant legal and privacy risk).</div>
+          </div>
+          <div class="wow-card">
+            <div class="wow-title"><i class="ti ti-link"></i> Meta links Instagram + WhatsApp silently</div>
+            <div class="wow-desc">Using both Instagram and WhatsApp under the same Meta umbrella means your messaging patterns and social content behaviour are potentially cross-referenced — even if you treat them as separate apps.</div>
+          </div>
+          <div class="wow-card">
+            <div class="wow-title"><i class="ti ti-camera"></i> Google Photos is a biometric vault</div>
+            <div class="wow-desc">Face grouping in Google Photos processes facial geometry. Depending on your region's laws and account settings, this may constitute biometric data processing — one of the most sensitive data categories globally.</div>
+          </div>
+          <div class="wow-card">
+            <div class="wow-title"><i class="ti ti-device-gamepad-2"></i> Gaming apps collect more than scores</div>
+            <div class="wow-desc">PUBG Mobile (Krafton) and Roblox both request device permissions, microphone access, and contact data on mobile. In-app purchase history builds a spending behaviour profile over time.</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- FINAL VERDICT -->
+      <div class="card">
+        <div class="section-label">Final Verdict</div>
+        <div class="verdict-card-inner">
+          <div class="verdict-title">Your digital shadow is large — and mostly in corporate hands</div>
+          <div class="verdict-desc">With 15 services across 7 parent companies, your data is fragmented yet cross-referenceable. Alphabet alone has an estimated 4-service view of your life. The combination of social, financial, and search data creates a detailed inferred profile that ad networks, data brokers, and potentially bad actors can access or purchase.</div>
+          
+          <div class="verdict-bar-container">
+            <div class="verdict-bar">
+              <div class="verdict-marker" style="left:74%"></div>
+            </div>
+            <div class="verdict-bar-labels">
+              <span>Minimal</span>
+              <span>Moderate</span>
+              <span>Significant</span>
+              <span>Extensive</span>
+            </div>
+          </div>
+          
+          <div class="verdict-details-grid">
+            <div class="verdict-risk-box bg-red-dim">
+              <div class="box-title text-red">Biggest Risks</div>
+              <div class="box-content">
+                Cross-platform identity linking<br>
+                Biometric data (Photos)<br>
+                TikTok cross-border risk<br>
+                Financial behaviour tracking
+              </div>
+            </div>
+            <div class="verdict-risk-box bg-green-dim">
+              <div class="box-title text-green">What's Working</div>
+              <div class="box-content">
+                iMessage is end-to-end encrypted<br>
+                Meesho is a lower-risk app<br>
+                Discord collects less than most<br>
+                Apple generally stronger on privacy
+              </div>
+            </div>
+          </div>
+          
+          <div class="verdict-footer">This report is based solely on your self-reported service list. No private databases were accessed. All inferences are probabilistic estimates, not verified facts. Laws may vary by jurisdiction.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateSimulator() {
+      const checkboxes = document.querySelectorAll('.action-checkbox');
+      let pointsAdded = 0;
+      
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          pointsAdded += parseInt(cb.getAttribute('data-points'), 10);
+        }
+      });
+      
+      const baseScore = 34;
+      const finalScore = baseScore + pointsAdded;
+      
+      // Update Score Panel in Action Plan card
+      document.getElementById('sim-current-score').innerText = baseScore + ' / 100';
+      const potScoreEl = document.getElementById('sim-potential-score');
+      potScoreEl.innerText = finalScore + ' / 100';
+      
+      const progressFill = document.getElementById('sim-progress-bar');
+      progressFill.style.width = finalScore + '%';
+      
+      // Update the Top Metric Card for Privacy Score
+      const metricVal = document.getElementById('current-score-card');
+      const metricLabel = document.getElementById('current-rating-card');
+      
+      metricVal.innerText = finalScore;
+      
+      // Dynamically change rating label
+      if (finalScore <= 35) {
+        metricLabel.innerText = 'Fair';
+        metricLabel.parentElement.className = 'metric-card metric-card-yellow';
+      } else if (finalScore <= 55) {
+        metricLabel.innerText = 'Moderate';
+        metricLabel.parentElement.className = 'metric-card metric-card-orange';
+      } else if (finalScore <= 70) {
+        metricLabel.innerText = 'Good';
+        metricLabel.parentElement.className = 'metric-card metric-card-green';
+      } else {
+        metricLabel.innerText = 'Excellent';
+        metricLabel.parentElement.className = 'metric-card metric-card-blue';
+      }
+    }
+  </script>
+</body>
+</html>
