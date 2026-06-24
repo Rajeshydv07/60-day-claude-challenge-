@@ -103,4 +103,4 @@ The startup addresses a real problem with a scalable AI solution. Before aggress
 
 ---
 ## Business Strategy Dashboard
-![AI Interview Coach Dashboard](./dashboard.jpg)
+![AI Interview Coach Dashboard](./screenshot.png)
