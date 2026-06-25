@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Shark Tank Simulator</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --success-hover: #059669;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --gold: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background-color: #0f172a;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        /* Results Section */
+        #results-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2.section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .score-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .score-badge {
+            background-color: #111827;
+            border: 1px solid var(--card-border);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-badge span {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .summary-details {
+            margin-bottom: 2rem;
+        }
+
+        .summary-details p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-details strong {
+            color: white;
+        }
+
+        .decision {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .decision.acquire { color: var(--gold); }
+        .decision.invest { color: var(--success); }
+        .decision.pass { color: #ef4444; }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Leaderboard */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        @media (max-width: 640px) {
+            .score-grid {
+                flex-direction: column;
+            }
+            .actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+    <!-- Include html2pdf for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>AI Shark Tank Simulator</h1>
+            <p class="subtitle">Pitch your startup and get an instant AI evaluation</p>
+        </header>
+
+        <!-- Pitch Form -->
+        <div class="card" id="pitch-form-card">
+            <h2 class="section-title">Submit Your Pitch</h2>
+            <form id="pitchForm">
+                <div class="form-group">
+                    <label for="startupName">Startup Name</label>
+                    <input type="text" id="startupName" required placeholder="e.g. FreshCheck AI">
+                </div>
+                
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <select id="industry" required>
+                        <option value="">Select Industry</option>
+                        <option value="Tech">Technology / AI</option>
+                        <option value="Health">Healthcare</option>
+                        <option value="Fintech">Fintech</option>
+                        <option value="Edtech">EdTech</option>
+                        <option value="E-commerce">E-commerce</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenue">Monthly Revenue (in Lakhs ₹)</label>
+                    <input type="number" id="revenue" required placeholder="e.g. 50">
+                </div>
+
+                <div class="form-group">
+                    <label for="ask">Funding Ask (in Lakhs ₹)</label>
+                    <input type="number" id="ask" required placeholder="e.g. 500">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Pitch to AI Sharks 🦈</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section">
+            <div class="card" id="scorecard">
+                <h2 class="section-title">Scorecard</h2>
+                
+                <div class="score-grid" id="scoreGrid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="summary-details">
+                    <p>Total: <strong id="totalScore">0/100</strong></p>
+                    <p>Suggested Valuation: <strong id="suggestedValuation">₹0 Crore</strong></p>
+                    <p>Recommended Funding: <strong id="recommendedFunding">₹0 Lakh</strong></p>
+                    <p class="decision" id="finalDecision">Decision: </p>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-success" id="saveLeaderboardBtn">Save Leaderboard</button>
+                    <button class="btn btn-success" id="downloadReportBtn">Download Pitch Report</button>
+                    <button class="btn btn-success" id="shareResultBtn">Share Result</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title">Leaderboard</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Startup</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pitchForm = document.getElementById('pitchForm');
+            const pitchFormCard = document.getElementById('pitchForm-card');
+            const resultsSection = document.getElementById('results-section');
+            const scoreGrid = document.getElementById('scoreGrid');
+            const totalScoreEl = document.getElementById('totalScore');
+            const valuationEl = document.getElementById('suggestedValuation');
+            const fundingEl = document.getElementById('recommendedFunding');
+            const decisionEl = document.getElementById('finalDecision');
+            const leaderboardBody = document.getElementById('leaderboardBody');
+            
+            let currentEvaluation = null;
+
+            // Load leaderboard from local storage
+            const loadLeaderboard = () => {
+                const leaderboard = JSON.parse(localStorage.getItem('sharkTankLeaderboard')) || [];
+                leaderboardBody.innerHTML = '';
+                
+                leaderboard.sort((a, b) => b.score - a.score).forEach(entry => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${entry.name}</td>
+                        <td>${entry.score}</td>
+                    `;
+                    leaderboardBody.appendChild(tr);
+                });
+            };
+
+            loadLeaderboard();
+
+            pitchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const name = document.getElementById('startupName').value;
+                const revenue = parseFloat(document.getElementById('revenue').value);
+                const ask = parseFloat(document.getElementById('ask').value);
+
+                // Simulate Evaluation
+                const market = Math.floor(Math.random() * 6) + 14; // 14-19
+                const innovation = Math.floor(Math.random() * 6) + 14; 
+                const business = Math.floor(Math.random() * 7) + 13;
+                const execution = Math.floor(Math.random() * 6) + 14;
+                const investment = Math.floor(Math.random() * 8) + 12;
+
+                const total = market + innovation + business + execution + investment;
+                
+                // Calculate valuation based on revenue (rough heuristic)
+                // Assuming revenue is monthly in Lakhs. Annual = revenue * 12.
+                // Valuation multiple = 10x to 30x depending on score.
+                const annualRevenueLakhs = revenue * 12;
+                const multiple = 10 + (total / 100) * 20; 
+                let valuationLakhs = annualRevenueLakhs * multiple;
+                
+                // Add a base value if pre-revenue or very low revenue but good score
+                if (revenue < 5 && total > 70) {
+                    valuationLakhs += (total * 50); 
+                }
+
+                const valuationCrore = (valuationLakhs / 100).toFixed(0);
+                
+                // Recommended funding ~ 10-20% of valuation, or closer to their ask if reasonable
+                let recommendedAsk = (valuationLakhs * 0.15).toFixed(0);
+                
+                // Decision logic
+                let decision = 'PASS';
+                let decisionClass = 'pass';
+                let icon = '❌';
+
+                if (total >= 85) {
+                    decision = 'ACQUIRE';
+                    decisionClass = 'acquire';
+                    icon = '🤝';
+                } else if (total >= 70) {
+                    decision = 'INVEST';
+                    decisionClass = 'invest';
+                    icon = '💰';
+                }
+
+                currentEvaluation = {
+                    name,
+                    score: total,
+                    market, innovation, business, execution, investment,
+                    valuation: valuationCrore,
+                    funding: recommendedAsk,
+                    decision, icon, decisionClass
+                };
+
+                renderResults(currentEvaluation);
+            });
+
+            function renderResults(data) {
+                // Hide form, show results
+                document.getElementById('pitch-form-card').style.display = 'none';
+                resultsSection.style.display = 'block';
+
+                // Populate scores
+                scoreGrid.innerHTML = `
+                    <div class="score-badge"><span>Market</span> ${data.market}</div>
+                    <div class="score-badge"><span>Innovation</span> ${data.innovation}</div>
+                    <div class="score-badge"><span>Business</span> ${data.business}</div>
+                    <div class="score-badge"><span>Execution</span> ${data.execution}</div>
+                    <div class="score-badge"><span>Investment</span> ${data.investment}</div>
+                `;
+
+                totalScoreEl.textContent = `${data.score}/100`;
+                valuationEl.textContent = `₹${data.valuation} Crore`;
+                fundingEl.textContent = `₹${data.funding} Lakh`;
+                
+                decisionEl.innerHTML = `Decision: ${data.icon} <span class="${data.decisionClass}">${data.decision}</span>`;
+                decisionEl.className = `decision ${data.decisionClass}`;
+            }
+
+            // Save to Leaderboard
+            document.getElementById('saveLeaderboardBtn').addEventListener('click', () => {
+                if (!currentEvaluation) return;
+                
+                const leaderboard = JSON.parse(localStorage.getItem('sharkTankLeaderboard')) || [];
+                // Check if already exists
+                if (!leaderboard.some(e => e.name === currentEvaluation.name)) {
+                    leaderboard.push({ name: currentEvaluation.name, score: currentEvaluation.score });
+                    localStorage.setItem('sharkTankLeaderboard', JSON.stringify(leaderboard));
+                    loadLeaderboard();
+                    alert('Saved to leaderboard!');
+                } else {
+                    alert('Already in leaderboard!');
+                }
+            });
+
+            // Download PDF Report
+            document.getElementById('downloadReportBtn').addEventListener('click', () => {
+                const element = document.getElementById('scorecard');
+                const opt = {
+                    margin:       1,
+                    filename:     `${currentEvaluation.name.replace(/\s+/g, '_')}_Pitch_Report.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0f172a' },
+                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                // Temporarily hide buttons for PDF
+                const actions = document.querySelector('.actions');
+                actions.style.display = 'none';
+                
+                html2pdf().set(opt).from(element).save().then(() => {
+                    actions.style.display = 'flex'; // Restore buttons
+                });
+            });
+
+            // Share Result
+            document.getElementById('shareResultBtn').addEventListener('click', () => {
+                if (!currentEvaluation) return;
+                const text = `I just pitched ${currentEvaluation.name} on AI Shark Tank Simulator!\nScore: ${currentEvaluation.score}/100\nDecision: ${currentEvaluation.icon} ${currentEvaluation.decision}\nValuation: ₹${currentEvaluation.valuation} Cr`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'My AI Shark Tank Pitch',
+                        text: text
+                    }).catch(err => console.error(err));
+                } else {
+                    navigator.clipboard.writeText(text);
+                    alert('Result copied to clipboard!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
