@@ -1,80 +1,65 @@
 # 🏥 Prior Authorization Workflow Simulator
+Interactive healthcare PA training — drag, decide, learn
 
 ![Prior Authorization Workflow Simulator](./screenshot.png)
 
-An interactive healthcare workflow simulator that demonstrates the Prior Authorization (PA) process used by healthcare providers and insurance companies.
+---
+
+### 📊 KPI DASHBOARD
+- **Days Elapsed:** 14
+- **Efficiency Score:** 97
 
 ---
 
-## 📌 Overview
+### 🔄 WORKFLOW PHASES
 
-This project simulates the complete Prior Authorization workflow from patient intake to insurance approval.
-
-Users can drag workflow cards across different stages, upload required documentation, monitor KPIs, and complete authorization requests through an intuitive dashboard.
-
----
-
-## ✨ Features
-
-- Interactive Drag & Drop Workflow
-- Multiple Patient Scenarios
-- Provider & Insurance Review Process
-- Required Document Validation
-- Authorization Approval / Denial
-- KPI Dashboard
-- Days Elapsed Tracking
-- Efficiency Score
-- Responsive Modern UI
+| Phase | Responsible | Key Actions |
+| :--- | :--- | :--- |
+| **Patient Intake** | Patient | Initial registration and demographic collection |
+| **Medical Evaluation** | Provider / Clinic | Patient assessment and initial diagnosis |
+| **Document Collection** | Provider / Clinic | Gathering required clinical notes and results |
+| **PA Submission** | Provider / Clinic | Submitting the authorization request |
+| **Payer Review** | Payer / Insurance | Assessing medical necessity against guidelines |
+| **Decision** | Payer / Insurance | Approving or denying the request |
+| **Service Fulfillment**| Patient & Provider | Scheduling the approved procedure/service |
 
 ---
 
-## 🖥️ Patient Scenarios
+### 📋 REQUIRED DOCUMENTS
+*Status: 3/3 required documents added*
 
-- Elective Surgery
-- Brain MRI
-- Specialty Medication
-- Inpatient Admission
-
----
-
-## Workflow
-
-Patient Intake
-
-↓
-
-Medical Evaluation
-
-↓
-
-Document Collection
-
-↓
-
-PA Submission
-
-↓
-
-Insurance Review
-
-↓
-
-Decision
-
-↓
-
-Service Fulfillment
+- ✅ **Emergency Department Notes** *
+- ✅ **Lab / Imaging Results** *
+- ✅ **Admission / Surgery Orders** *
+- ✅ **Attending Physician Notes**
 
 ---
 
-## 🛠️ Tech Stack
+### 🏥 PATIENT SCENARIOS
+Each scenario introduces different PA challenges, documents, and outcomes.
 
-- HTML5
-- CSS3
-- JavaScript
-- Drag & Drop API
-- Responsive Design
+**1. Brain MRI** `EASY`
+- Diagnostic imaging PA — fastest to process but needs appropriate indication.
+
+**2. Elective Surgery** `MEDIUM`
+- Knee replacement PA — common but requires conservative-treatment history.
+
+**3. Inpatient Admission** `MEDIUM`
+- Urgent inpatient PA — retroactive authorization may apply.
+
+**4. Specialty Medication** `HARD`
+- Biologic PA — step therapy required; expect denial and appeal.
 
 ---
 
-## 📂 Project Structure
+### ⚡ AVAILABLE ACTIONS
+- 🟩 **Schedule & Fulfill Service**
+
+> **✅ AUTHORIZATION APPROVED!**
+> The payer has approved the prior authorization request.
+> - An **authorization number** is issued — this must be included on all claims.
+> - Approval has an expiration date.
+
+---
+⭐ **Goal:** Demystify the prior authorization process for healthcare professionals.
+🚀 **Learn by doing. Master the workflow.**
