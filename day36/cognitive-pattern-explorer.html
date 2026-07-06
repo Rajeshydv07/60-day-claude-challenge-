@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Pattern Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-surface: rgba(30, 41, 59, 0.7);
+            --bg-surface-hover: rgba(51, 65, 85, 0.9);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --glass-blur: 12px;
+            --transition-speed: 0.4s;
+        }
+
+        body.theme-calm {
+            --bg-base: #022c22;
+            --bg-surface: rgba(6, 78, 59, 0.6);
+            --bg-surface-hover: rgba(6, 95, 70, 0.9);
+            --accent: #10b981;
+            --accent-hover: #34d399;
+            --border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        body.theme-stress {
+            --bg-base: #450a0a;
+            --bg-surface: rgba(127, 29, 29, 0.6);
+            --bg-surface-hover: rgba(153, 27, 27, 0.9);
+            --accent: #ef4444;
+            --accent-hover: #f87171;
+            --border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color var(--transition-speed) ease;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Gradients */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.5;
+            transition: all 1s ease;
+        }
+
+        .blob-1 {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+        }
+
+        .blob-2 {
+            bottom: -10%; right: -10%; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, var(--accent-hover) 0%, transparent 70%);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.39);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: var(--accent-hover);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.23);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Options for questions */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .option-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option-card:hover {
+            background: var(--bg-surface-hover);
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .option-card.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .option-card.selected p {
+            color: #f1f5f9;
+        }
+
+        /* Drag and Drop Lists */
+        .dnd-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 2rem 0;
+        }
+
+        .dnd-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            font-weight: 500;
+        }
+
+        .dnd-item:active {
+            cursor: grabbing;
+        }
+
+        .dnd-item.dragging {
+            opacity: 0.5;
+            background: var(--accent);
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .dnd-item .drag-handle {
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Result Dashboard */
+        .result-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .result-header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .traits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .trait-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .trait-card h3 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .trait-card .value {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+        }
+
+        .reflection-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .reflection-box h4 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+        }
+
+        /* Header Navigation */
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mode-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        @media (max-width: 600px) {
+            .glass-card {
+                padding: 2rem;
+            }
+            .result-header h1 {
+                font-size: 2.25rem;
+            }
+            .traits-grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .container {
+                padding-top: 5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <header>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg>
+            Cognitive Explorer
+        </div>
+        <div class="mode-badge" id="current-mode-badge">Neutral Mode</div>
+    </header>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="screen-welcome" class="screen active">
+            <div class="glass-card">
+                <h1 style="font-size: 2.5rem;">Discover Your Natural Thinking Pattern</h1>
+                <p style="font-size: 1.1rem;">Welcome to the Cognitive Pattern Explorer. This interactive experience is designed to map out your unique decision-making flow and cognitive priorities.</p>
+                <p>It is not a diagnostic tool, but rather a reflective journey into how your mind processes information, handles scenarios, and prioritizes values.</p>
+                
+                <div style="margin-top: 3rem;">
+                    <button class="btn" onclick="app.navigate('screen-mode')">Begin Exploration ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div id="screen-mode" class="screen">
+            <div class="glass-card">
+                <h2>Select Your Context</h2>
+                <p>Our thinking patterns often shift depending on our environment. How would you like to frame this exploration?</p>
+                
+                <div class="options-grid">
+                    <div class="option-card" onclick="app.setMode('calm')">
+                        <div style="font-size: 2.5rem; margin-right: 0.5rem;">🌿</div>
+                        <div>
+                            <h3 style="margin-bottom: 0.25rem;">Calm Mode</h3>
+                            <p style="margin:0; font-size: 0.95rem;">Reflective, relaxed, low-stakes decision making.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="option-card" onclick="app.setMode('stress')">
+                        <div style="font-size: 2.5rem; margin-right: 0.5rem;">⚡</div>
+                        <div>
+                            <h3 style="margin-bottom: 0.25rem;">Stress Mode</h3>
+                            <p style="margin:0; font-size: 0.95rem;">High-pressure, urgent, instinct-driven responses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 1: Questions -->
+        <div id="screen-chapter1" class="screen">
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span style="color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;">Chapter 1: Scenarios</span>
+                    <span id="question-counter" style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">1 / 5</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="q-progress"></div>
+                </div>
+                
+                <h2 id="question-text" style="font-size: 1.75rem; min-height: 4.5rem; display: flex; align-items: center;">Question text goes here?</h2>
+                
+                <div class="options-grid" id="options-container">
+                    <!-- Options injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 2: Priorities -->
+        <div id="screen-chapter2" class="screen">
+            <div class="glass-card">
+                <span style="color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">Chapter 2: Priorities</span>
+                <h2 style="font-size: 2rem;">Rank Your Values</h2>
+                <p>Drag and drop the following priorities from most important (top) to least important (bottom) when making a critical decision.</p>
+                
+                <div class="dnd-list" id="priorities-list">
+                    <!-- Items injected via JS -->
+                </div>
+                
+                <button class="btn" onclick="app.finishChapter2()" style="width: 100%; margin-top: 1rem;">Continue to Final Chapter ➔</button>
+            </div>
+        </div>
+
+        <!-- Chapter 3: Sequence -->
+        <div id="screen-chapter3" class="screen">
+            <div class="glass-card">
+                <span style="color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">Chapter 3: Cognitive Flow</span>
+                <h2 style="font-size: 2rem;">Map Your Thinking Sequence</h2>
+                <p>When faced with a new challenge, in what order do you naturally perform these steps? Drag to arrange chronologically (first step at the top).</p>
+                
+                <div class="dnd-list" id="sequence-list">
+                    <!-- Items injected via JS -->
+                </div>
+                
+                <button class="btn" onclick="app.finishChapter3()" style="width: 100%; margin-top: 1rem;">Generate My Snapshot ➔</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="screen">
+            <div class="glass-card">
+                <div class="result-header">
+                    <span style="color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">Your Cognitive Snapshot</span>
+                    <h1 id="result-title">The Analytical Thinker</h1>
+                    <p id="result-subtitle" style="font-size: 1.1rem; max-width: 500px; margin: 0 auto;">A blend of logic and structured evaluation.</p>
+                </div>
+
+                <div class="traits-grid">
+                    <div class="trait-card">
+                        <h3>Primary Driver</h3>
+                        <div class="value" id="res-driver">Logic</div>
+                    </div>
+                    <div class="trait-card">
+                        <h3>Secondary Driver</h3>
+                        <div class="value" id="res-secondary">Empathy</div>
+                    </div>
+                    <div class="trait-card">
+                        <h3>Context</h3>
+                        <div class="value" id="res-context">Calm</div>
+                    </div>
+                </div>
+
+                <div class="reflection-box">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+                        Reflection Insight
+                    </h4>
+                    <p id="res-insight" style="margin:0; color: var(--text-main); font-size: 0.95rem; line-height: 1.6;">Your pattern shows...</p>
+                </div>
+
+                <div class="reflection-box" style="border-left-color: var(--text-muted);">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> 
+                        Sequence Flow
+                    </h4>
+                    <p id="res-sequence" style="margin:0; color: var(--text-main); font-family: var(--font-heading); font-weight: 600; font-size: 1.1rem;">1. Gather ➔ 2. Review</p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 3rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="app.restart()">↻ Replay Assessment</button>
+                    <button class="btn" onclick="app.saveResult()">💾 Save Snapshot</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structures
+        const questions = [
+            {
+                q: "An unexpected urgent task arrives on your desk...",
+                options: [
+                    { text: "Analyze all requirements before taking any action.", type: "A" },
+                    { text: "Trust my gut instinct on how to handle it.", type: "E" },
+                    { text: "Jump straight in and figure it out as I go.", type: "F" },
+                    { text: "Take a brief pause to create a quick plan, then execute.", type: "B" },
+                    { text: "Worry about the potential impact and feel slightly paralyzed.", type: "O" }
+                ]
+            },
+            {
+                q: "When collaborating with others on a difficult problem...",
+                options: [
+                    { text: "Rely heavily on data, facts, and proven precedents.", type: "A" },
+                    { text: "Focus on team harmony, ensuring everyone feels heard.", type: "E" },
+                    { text: "Push the team for quick, decisive action to maintain momentum.", type: "F" },
+                    { text: "Mediate between ideas and look for a balanced middle ground.", type: "B" },
+                    { text: "Try to accommodate every single suggestion and lose track.", type: "O" }
+                ]
+            },
+            {
+                q: "A project you led just failed...",
+                options: [
+                    { text: "Conduct a thorough root cause analysis to document errors.", type: "A" },
+                    { text: "Process the emotional weight of the failure first.", type: "E" },
+                    { text: "Immediately start the next project to bounce back.", type: "F" },
+                    { text: "Write down key lessons learned to apply next time.", type: "B" },
+                    { text: "Ruminate extensively on what I could have done differently.", type: "O" }
+                ]
+            },
+            {
+                q: "Choosing between two equally good career options...",
+                options: [
+                    { text: "Create a detailed pros and cons matrix with weightings.", type: "A" },
+                    { text: "Choose the one that 'feels' right in my heart.", type: "E" },
+                    { text: "Flip a coin or pick quickly to avoid wasting time.", type: "F" },
+                    { text: "Take time to vividly visualize myself in both scenarios.", type: "B" },
+                    { text: "Delay the decision as long as absolutely possible.", type: "O" }
+                ]
+            },
+            {
+                q: "Under extreme, sustained pressure...",
+                options: [
+                    { text: "Become highly methodical and emotionally detached.", type: "A" },
+                    { text: "Become highly sensitive to the stress levels of those around me.", type: "E" },
+                    { text: "Take charge, delegate rapidly, and direct others.", type: "F" },
+                    { text: "Step back temporarily to regain broader perspective.", type: "B" },
+                    { text: "Freeze, overanalyze the pressure, and struggle to start.", type: "O" }
+                ]
+            }
+        ];
+
+        const prioritiesData = [
+            "Logic & Data Analysis",
+            "Empathy & Human Connection",
+            "Speed & Immediate Action",
+            "Harmony & Balanced Outcomes",
+            "Perfection & Risk Mitigation"
+        ];
+
+        const sequenceData = [
+            "Gather Information",
+            "Consult Others / Check Feelings",
+            "Brainstorm Options",
+            "Make a Firm Choice",
+            "Review & Adjust Outcome"
+        ];
+
+        // Application State
+        const state = {
+            mode: 'neutral',
+            currentQuestionIndex: 0,
+            answers: [],
+            priorities: [...prioritiesData],
+            sequence: [...sequenceData],
+            results: {}
+        };
+
+        // DOM Elements
+        const DOM = {
+            screens: document.querySelectorAll('.screen'),
+            badge: document.getElementById('current-mode-badge'),
+            qProgress: document.getElementById('q-progress'),
+            qText: document.getElementById('question-text'),
+            optionsContainer: document.getElementById('options-container'),
+            qCounter: document.getElementById('question-counter')
+        };
+
+        const app = {
+            init() {
+                this.checkSavedData();
+            },
+
+            checkSavedData() {
+                const saved = localStorage.getItem('cognitiveExplorerResult');
+                if (saved) {
+                    console.log("Found previous session data.");
+                }
+            },
+
+            navigate(screenId) {
+                DOM.screens.forEach(s => {
+                    s.classList.remove('active');
+                    s.style.display = 'none';
+                });
+                
+                setTimeout(() => {
+                    DOM.screens.forEach(s => {
+                        if (s.id === screenId) {
+                            s.style.display = 'block';
+                            setTimeout(() => s.classList.add('active'), 10);
+                        }
+                    });
+                }, 50);
+            },
+
+            setMode(mode) {
+                state.mode = mode;
+                document.body.className = `theme-${mode}`;
+                DOM.badge.textContent = mode === 'calm' ? '🌿 Calm Context' : '⚡ Stress Context';
+                
+                state.currentQuestionIndex = 0;
+                state.answers = [];
+                this.renderQuestion();
+                this.navigate('screen-chapter1');
+            },
+
+            renderQuestion() {
+                const q = questions[state.currentQuestionIndex];
+                DOM.qText.textContent = q.q;
+                DOM.qCounter.textContent = `${state.currentQuestionIndex + 1} / ${questions.length}`;
+                
+                const progress = ((state.currentQuestionIndex) / questions.length) * 100;
+                DOM.qProgress.style.width = `${progress}%`;
+
+                DOM.optionsContainer.innerHTML = '';
+                
+                // Shuffle options to prevent positional bias
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+                shuffledOptions.forEach((opt, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'option-card';
+                    card.innerHTML = `
+                        <div style="min-width: 28px; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; color: var(--text-main);">
+                            ${String.fromCharCode(65 + index)}
+                        </div>
+                        <p style="margin: 0; font-size: 1.05rem;">${opt.text}</p>
+                    `;
+                    card.onclick = () => this.handleAnswer(opt.type);
+                    DOM.optionsContainer.appendChild(card);
+                });
+            },
+
+            handleAnswer(type) {
+                state.answers.push(type);
+                
+                if (state.currentQuestionIndex < questions.length - 1) {
+                    state.currentQuestionIndex++;
+                    
+                    DOM.optionsContainer.style.opacity = '0';
+                    DOM.optionsContainer.style.transform = 'translateY(10px)';
+                    DOM.optionsContainer.style.transition = 'all 0.2s ease';
+                    
+                    setTimeout(() => {
+                        this.renderQuestion();
+                        DOM.optionsContainer.style.opacity = '1';
+                        DOM.optionsContainer.style.transform = 'translateY(0)';
+                    }, 250);
+                } else {
+                    DOM.qProgress.style.width = `100%`;
+                    setTimeout(() => {
+                        this.setupDraggableList('priorities-list', state.priorities);
+                        this.navigate('screen-chapter2');
+                    }, 500);
+                }
+            },
+
+            setupDraggableList(containerId, dataArray) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                
+                dataArray.forEach((item, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'dnd-item';
+                    el.draggable = true;
+                    el.dataset.index = index;
+                    el.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="color: var(--accent); font-weight: bold; font-family: var(--font-heading); width: 1.5rem;">${index + 1}.</span>
+                            <span>${item}</span>
+                        </div>
+                        <div class="drag-handle">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        </div>
+                    `;
+                    
+                    el.addEventListener('dragstart', (e) => {
+                        el.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                        // Required for Firefox
+                        e.dataTransfer.setData('text/plain', '');
+                    });
+                    
+                    el.addEventListener('dragend', () => {
+                        el.classList.remove('dragging');
+                        this.updateDataArrayFromDOM(containerId, dataArray);
+                        this.updateListNumbers(containerId);
+                    });
+                    
+                    container.appendChild(el);
+                });
+
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const afterElement = this.getDragAfterElement(container, e.clientY);
+                    const draggable = document.querySelector('.dragging');
+                    if (draggable) {
+                        if (afterElement == null) {
+                            container.appendChild(draggable);
+                        } else {
+                            container.insertBefore(draggable, afterElement);
+                        }
+                    }
+                });
+            },
+
+            getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.dnd-item:not(.dragging)')];
+
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            },
+
+            updateDataArrayFromDOM(containerId, dataArray) {
+                const container = document.getElementById(containerId);
+                const items = [...container.querySelectorAll('.dnd-item')];
+                dataArray.length = 0;
+                items.forEach(item => {
+                    // Extract just the text, avoiding the number span
+                    const spans = item.querySelectorAll('span');
+                    dataArray.push(spans[1].textContent);
+                });
+            },
+
+            updateListNumbers(containerId) {
+                const container = document.getElementById(containerId);
+                const items = [...container.querySelectorAll('.dnd-item')];
+                items.forEach((item, index) => {
+                    const numSpan = item.querySelector('span');
+                    numSpan.textContent = `${index + 1}.`;
+                });
+            },
+
+            finishChapter2() {
+                this.setupDraggableList('sequence-list', state.sequence);
+                this.navigate('screen-chapter3');
+            },
+
+            finishChapter3() {
+                this.calculateResults();
+                this.renderResults();
+                this.navigate('screen-result');
+            },
+
+            calculateResults() {
+                const counts = { A: 0, E: 0, F: 0, B: 0, O: 0 };
+                state.answers.forEach(a => counts[a]++);
+                
+                let max = 0;
+                let primaryTrait = 'B';
+                for (const [key, val] of Object.entries(counts)) {
+                    if (val > max) {
+                        max = val;
+                        primaryTrait = key;
+                    }
+                }
+
+                const styles = {
+                    'A': { title: 'The Analytical Thinker', sub: 'Driven by logic, data, and structured evaluation.', driver: 'Logic & Facts' },
+                    'E': { title: 'The Emotional Intuitive', sub: 'Guided by empathy, harmony, and gut feelings.', driver: 'Empathy & Intuition' },
+                    'F': { title: 'The Action-First Maker', sub: 'Prioritizes momentum, speed, and learning by doing.', driver: 'Speed & Execution' },
+                    'B': { title: 'The Balanced Reflector', sub: 'Seeks middle ground, planning, and holistic views.', driver: 'Balance & Perspective' },
+                    'O': { title: 'The Deep Processor', sub: 'Highly sensitive to variables, leading to intense deliberation.', driver: 'Caution & Perfection' }
+                };
+
+                const resultStyle = styles[primaryTrait];
+                const topPriority = state.priorities[0].split(' & ')[0];
+
+                let insight = `In a ${state.mode} context, your dominant approach aligns with being ${resultStyle.title}. `;
+                if (state.mode === 'stress') {
+                    insight += `Under pressure, you lean heavily on ${resultStyle.driver.toLowerCase()} to regain control and mitigate risk. Be mindful of tunnel vision and remember to leverage your secondary driver (${topPriority.toLowerCase()}) to maintain balance.`;
+                } else {
+                    insight += `In relaxed environments, you naturally utilize ${resultStyle.driver.toLowerCase()} to guide your path. This allows you to process information thoroughly before committing, backed strongly by your core value of ${topPriority.toLowerCase()}.`;
+                }
+
+                // Shorten sequence for display
+                const shortSequence = state.sequence.map(s => s.split(' ')[0]).join(' ➔ ');
+
+                state.results = {
+                    title: resultStyle.title,
+                    subtitle: resultStyle.sub,
+                    driver: resultStyle.driver,
+                    secondary: topPriority,
+                    context: state.mode === 'calm' ? 'Relaxed' : 'Pressured',
+                    insight: insight,
+                    sequenceFlow: shortSequence
+                };
+            },
+
+            renderResults() {
+                document.getElementById('result-title').textContent = state.results.title;
+                document.getElementById('result-subtitle').textContent = state.results.subtitle;
+                document.getElementById('res-driver').textContent = state.results.driver;
+                document.getElementById('res-secondary').textContent = state.results.secondary;
+                document.getElementById('res-context').textContent = state.results.context;
+                document.getElementById('res-insight').textContent = state.results.insight;
+                document.getElementById('res-sequence').textContent = state.results.sequenceFlow;
+            },
+
+            saveResult() {
+                try {
+                    localStorage.setItem('cognitiveExplorerResult', JSON.stringify({
+                        date: new Date().toISOString(),
+                        results: state.results,
+                        priorities: state.priorities,
+                        sequence: state.sequence
+                    }));
+                    
+                    const btn = document.querySelector('button[onclick="app.saveResult()"]');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '✅ Saved!';
+                    btn.classList.replace('btn', 'btn-outline');
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.replace('btn-outline', 'btn');
+                    }, 2000);
+                } catch (e) {
+                    alert("Could not save to local storage. Your browser may have it disabled.");
+                }
+            },
+
+            restart() {
+                document.body.className = '';
+                DOM.badge.textContent = 'Neutral Mode';
+                state.priorities = [...prioritiesData];
+                state.sequence = [...sequenceData];
+                this.navigate('screen-welcome');
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>
