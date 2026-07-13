@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workflow Architect — React Portfolio Build</title>
+<style>
+:root{
+  --bg:#0E0F17; --panel:#161826; --panel-2:#1D2033; --line:#2A2D42;
+  --text:#E9E8F2; --muted:#9391AC; --accent:#7C6FFF; --accent-2:#4ADE9C;
+  --warn:#F5A623; --danger:#FF6B7A; --mono:'JetBrains Mono', ui-monospace, monospace;
+  --disp:'Space Grotesk', sans-serif; --body:'Inter', sans-serif;
+  --radius:10px;
+}
+[data-theme="light"]{
+  --bg:#F6F5FA; --panel:#FFFFFF; --panel-2:#EEEDF7; --line:#DEDCEC;
+  --text:#1B1B26; --muted:#65637A; --accent:#5B4CE8; --accent-2:#12A876;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--bg); color:var(--text); font-family:var(--body);
+  line-height:1.5; transition:background .3s,color .3s;
+}
+::selection{background:var(--accent); color:#fff;}
+a{color:var(--accent);}
+h1,h2,h3,h4{font-family:var(--disp); font-weight:600; letter-spacing:-.01em;}
+.mono{font-family:var(--mono);}
+button{font-family:var(--body); cursor:pointer;}
+
+/* ---------- TOP BAR ---------- */
+.topbar{
+  position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px; background:color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;color:#fff;font-weight:700;}
+.brand-title{font-family:var(--disp);font-size:16px;}
+.brand-sub{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.top-actions{display:flex; gap:10px; align-items:center;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--panel);
+  color:var(--text);display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.icon-btn:hover{border-color:var(--accent);}
+.progress-pill{
+  font-family:var(--mono); font-size:11px; color:var(--muted); border:1px solid var(--line);
+  padding:6px 12px; border-radius:20px; background:var(--panel);
+}
+.progress-pill b{color:var(--accent-2);}
+
+/* ---------- LAYOUT ---------- */
+.app{display:grid; grid-template-columns:280px 1fr; min-height:calc(100vh - 61px);}
+.sidebar{
+  border-right:1px solid var(--line); padding:20px 14px; position:sticky; top:61px;
+  height:calc(100vh - 61px); overflow-y:auto;
+}
+.sidebar h4{font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin:14px 8px 8px;}
+.rail{position:relative; margin-left:6px;}
+.rail::before{content:"";position:absolute; left:9px; top:6px; bottom:6px; width:2px; background:var(--line);}
+.stage-link{
+  position:relative; display:flex; gap:10px; align-items:flex-start; padding:9px 8px 9px 4px;
+  border-radius:8px; cursor:pointer; color:var(--muted); font-size:13px;
+}
+.stage-link:hover{background:var(--panel);}
+.stage-link.active{color:var(--text); background:var(--panel-2);}
+.node{
+  z-index:1; width:20px;height:20px;border-radius:50%;background:var(--panel-2);
+  border:2px solid var(--line); display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono); font-size:9px; flex-shrink:0; margin-top:1px;
+}
+.stage-link.active .node{border-color:var(--accent); color:var(--accent); background:var(--bg);}
+.stage-link.done .node{background:var(--accent-2); border-color:var(--accent-2); color:#0E0F17;}
+.stage-check{margin-left:auto; opacity:.6;}
+.sidebar-foot{margin-top:22px; padding:12px; border-radius:8px; background:var(--panel); border:1px solid var(--line); font-size:11px; color:var(--muted);}
+
+.main{padding:28px 40px 80px; max-width:980px;}
+.crumb{font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:6px;}
+.hero{margin-bottom:34px;}
+.hero h1{font-size:32px; margin-bottom:8px;}
+.hero p{color:var(--muted); max-width:640px; font-size:14.5px;}
+
+/* pipeline diagram */
+.pipeline{
+  display:flex; overflow-x:auto; gap:0; margin:22px 0 34px; padding:18px 4px; border:1px solid var(--line);
+  border-radius:var(--radius); background:var(--panel);
+}
+.pnode{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; width:150px; text-align:center; position:relative;}
+.pnode .dot{width:14px;height:14px;border-radius:50%;background:var(--panel-2);border:2px solid var(--line); margin-bottom:8px;}
+.pnode.on .dot{background:var(--accent); border-color:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);}
+.pnode .lbl{font-size:11.5px; font-weight:600;}
+.pnode .sub{font-size:10px; color:var(--muted); font-family:var(--mono); margin-top:2px;}
+.pconn{flex:1 1 auto; height:2px; background:var(--line); margin-top:6px; min-width:24px;}
+
+/* stage card */
+.stage{
+  border:1px solid var(--line); border-radius:14px; background:var(--panel); margin-bottom:26px; overflow:hidden; scroll-margin-top:80px;
+}
+.stage-head{
+  padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--line);
+  background:var(--panel-2);
+}
+.stage-head-l{display:flex; gap:14px; align-items:center;}
+.stage-num{font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--line); border-radius:6px; padding:3px 8px;}
+.stage-head h2{font-size:19px;}
+.stage-time{font-family:var(--mono); font-size:11px; color:var(--muted); white-space:nowrap;}
+.stage-body{padding:22px 24px;}
+.stage-toggle{background:none;border:none;color:var(--muted);font-size:18px;}
+.done-btn{
+  border:1px solid var(--line); background:var(--panel); color:var(--muted); font-size:11px; font-family:var(--mono);
+  padding:6px 12px; border-radius:20px;
+}
+.done-btn.active{background:var(--accent-2); color:#0E0F17; border-color:var(--accent-2);}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media(max-width:720px){.grid2{grid-template-columns:1fr;}}
+
+.block{margin-bottom:18px;}
+.block h4{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+.block ul{padding-left:18px; font-size:13.5px;}
+.block li{margin-bottom:5px;}
+
+.tool-card{border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-bottom:10px; background:var(--bg);}
+.tool-card .t-name{font-weight:600; font-size:13.5px; display:flex; justify-content:space-between;}
+.tool-card .t-why{font-size:12.5px; color:var(--muted); margin-top:4px;}
+.tag{font-family:var(--mono); font-size:10px; padding:2px 7px; border-radius:20px; border:1px solid var(--line); color:var(--accent);}
+
+.prompt-box{
+  background:var(--bg); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:8px;
+  padding:12px 14px; font-family:var(--mono); font-size:12px; margin-bottom:10px; position:relative; white-space:pre-wrap;
+}
+.copy-btn{
+  position:absolute; top:8px; right:8px; font-size:10px; font-family:var(--mono); background:var(--panel-2);
+  border:1px solid var(--line); border-radius:6px; padding:3px 8px; color:var(--muted);
+}
+.copy-btn:hover{color:var(--accent);}
+
+.mistake{border-left:3px solid var(--danger);}
+.tip{border-left:3px solid var(--accent-2);}
+.callout{padding:10px 12px; border-radius:8px; background:var(--bg); border:1px solid var(--line); font-size:13px; margin-bottom:8px;}
+
+.notes textarea{
+  width:100%; min-height:70px; background:var(--bg); border:1px solid var(--line); border-radius:8px; color:var(--text);
+  padding:10px; font-family:var(--body); font-size:13px; resize:vertical;
+}
+
+table{width:100%; border-collapse:collapse; font-size:12.5px;}
+th,td{border:1px solid var(--line); padding:8px 10px; text-align:left;}
+th{background:var(--panel-2); font-family:var(--mono); font-size:11px; text-transform:uppercase; color:var(--muted);}
+
+/* decision tree */
+.dtree{border:1px solid var(--line); border-radius:10px; padding:16px; background:var(--bg);}
+.dq{font-weight:600; margin-bottom:10px; font-size:13.5px;}
+.dopts{display:flex; gap:10px; flex-wrap:wrap;}
+.dopt{border:1px solid var(--line); background:var(--panel); padding:8px 14px; border-radius:8px; font-size:12.5px;}
+.dopt:hover{border-color:var(--accent); color:var(--accent);}
+.dresult{margin-top:12px; padding:10px; border-radius:8px; background:var(--panel-2); font-size:13px; display:none;}
+
+section#summary .grid2{align-items:start;}
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.chip{font-family:var(--mono); font-size:11px; background:var(--panel-2); border:1px solid var(--line); padding:5px 10px; border-radius:20px;}
+
+.foot-cta{text-align:center; padding:50px 20px; color:var(--muted); font-size:12px; font-family:var(--mono);}
+
+@media print{
+  .sidebar,.topbar,.copy-btn,.done-btn,.stage-toggle{display:none !important;}
+  .app{grid-template-columns:1fr;}
+  .stage{break-inside:avoid; border:1px solid #999;}
+  body{background:#fff; color:#000;}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{position:relative; top:0; height:auto; border-right:none; border-bottom:1px solid var(--line);}
+  .main{padding:20px;}
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">AI</div>
+    <div>
+      <div class="brand-title">AI Workflow Architect</div>
+      <div class="brand-sub">React → Portfolio Website</div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <div class="progress-pill">Stages complete: <b id="progressCount">0</b>/6</div>
+    <button class="icon-btn" id="printBtn" title="Print / Export">🖨</button>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">🌓</button>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <h4>Workflow Stages</h4>
+    <div class="rail" id="stageNav"></div>
+    <h4>Reference</h4>
+    <div class="rail" style="margin-bottom:6px;">
+      <div class="stage-link" data-jump="summary"><span class="node">Σ</span> Summary &amp; Stack</div>
+      <div class="stage-link" data-jump="resources"><span class="node">R</span> Resources &amp; Future</div>
+    </div>
+    <div class="sidebar-foot">Progress and notes save automatically to this browser (localStorage). Use 🖨 to export a printable guide.</div>
+  </aside>
+
+  <main class="main">
+    <div class="crumb">Software Development / Frontend Development / React / Portfolio Website</div>
+    <div class="hero">
+      <h1>Your end-to-end build workflow</h1>
+      <p>A complete, stage-by-stage plan for shipping a React portfolio site with AI tools embedded at every step — from scoping to deployment. Mark stages done, jot notes, and copy prompts as you go.</p>
+    </div>
+
+    <div class="pipeline" id="pipeline"></div>
+
+    <div id="stages"></div>
+
+    <section class="stage" id="summary">
+      <div class="stage-head"><div class="stage-head-l"><span class="stage-num">Σ</span><h2>Workflow Summary &amp; Recommended AI Stack</h2></div></div>
+      <div class="stage-body">
+        <div class="grid2">
+          <div class="block">
+            <h4>Summary</h4>
+            <p style="font-size:13.5px;">Six stages take you from an empty repo to a deployed, discoverable React portfolio: Planning → Design → Setup → Build → Content &amp; Polish → Deploy &amp; Promote. Total realistic effort for a solo builder: <b>14–22 hours</b> spread over 1–2 weeks, most of it in Build and Content.</p>
+          </div>
+          <div class="block">
+            <h4>Recommended AI Stack</h4>
+            <div class="chip-row">
+              <span class="chip">Claude — code &amp; content</span>
+              <span class="chip">v0.dev — UI scaffolding</span>
+              <span class="chip">GitHub Copilot — in-editor completion</span>
+              <span class="chip">Midjourney — visual assets</span>
+              <span class="chip">Vercel — deploy/CI</span>
+              <span class="chip">Lighthouse CI — perf checks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage" id="resources">
+      <div class="stage-head"><div class="stage-head-l"><span class="stage-num">R</span><h2>Resources, Communities &amp; What's Next</h2></div></div>
+      <div class="stage-body">
+        <div class="grid2">
+          <div class="block">
+            <h4>Learning Resources</h4>
+            <ul>
+              <li>React docs — react.dev (official, up to date)</li>
+              <li>web.dev — performance &amp; Core Web Vitals</li>
+              <li>Josh Comeau's CSS/React blog — practical deep dives</li>
+              <li>Vercel's Next.js Learn course (if you go the framework route)</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h4>Communities</h4>
+            <ul>
+              <li>r/reactjs, r/webdev, r/frontend</li>
+              <li>Frontend Mentor community &amp; Discord</li>
+              <li>Indie Hackers (for launch/promotion feedback)</li>
+              <li>Dev.to and Hashnode for write-ups + backlinks</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="block">
+            <h4>Search Keywords</h4>
+            <div class="chip-row">
+              <span class="chip">react portfolio template 2026</span>
+              <span class="chip">react performance optimization</span>
+              <span class="chip">framer motion scroll animation</span>
+              <span class="chip">vercel deploy react vite</span>
+            </div>
+          </div>
+          <div class="block">
+            <h4>Additional AI Prompts</h4>
+            <div class="prompt-box">Audit my portfolio's About section for clarity and tone. Suggest 3 rewrites, each with a different level of formality.<button class="copy-btn" data-copy>Copy</button></div>
+          </div>
+        </div>
+        <div class="block">
+          <h4>Future Automation Opportunities</h4>
+          <ul>
+            <li>Auto-generate project case-study drafts from commit history + README using a script + Claude API.</li>
+            <li>Scheduled Lighthouse/accessibility audits via GitHub Actions with AI-summarized reports.</li>
+            <li>Auto-refresh "latest projects" section by pulling pinned GitHub repos on build.</li>
+            <li>AI-drafted LinkedIn/X post whenever a new project is merged to main.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot-cta">AI Workflow Architect — generated for a Frontend Development · React · Portfolio Website workflow.</div>
+  </main>
+</div>
+
+<script>
+const STAGES = [
+{
+  id:"planning", num:"01", title:"Planning & Scoping", time:"1.5–2 hrs",
+  objectives:["Define the portfolio's goal (job-hunting, freelance leads, personal brand)","Identify target audience (recruiters, clients, peers)","Shortlist 3–5 projects to feature"],
+  tasks:["Write a one-line positioning statement","List must-have pages/sections (Home, Projects, About, Contact)","Collect project assets: screenshots, repo links, write-ups","Benchmark 5 portfolios you admire"],
+  tools:[
+    {name:"Claude", why:"Strong at structuring positioning statements and turning a messy project list into a prioritized content outline.", alt:"ChatGPT"},
+    {name:"Notion AI", why:"Good for organizing scattered notes and assets into a working content plan you'll reuse in later stages.", alt:"Obsidian + plugins"}
+  ],
+  prompts:["Here is a list of my projects: [paste]. Help me pick the 4 strongest for a portfolio aimed at [recruiter type], and explain why each earns its slot."],
+  best:["Anchor scope to one audience — a portfolio trying to impress everyone impresses no one","Timebox research to under an hour; benchmarking can expand forever"],
+  mistakes:["Starting to code before deciding what the site needs to say","Featuring every project instead of your 3–5 strongest"],
+  outputs:["A one-page content brief","A shortlist of featured projects with assets gathered"],
+  tips:["Keep the brief in the same doc you'll paste into AI tools throughout the build — consistency saves re-explaining context"]
+},
+{
+  id:"design", num:"02", title:"Design & Visual Direction", time:"2–3 hrs",
+  objectives:["Choose a visual identity that isn't a generic template","Define layout, type, and color system","Produce a low-fidelity wireframe"],
+  tasks:["Generate 2–3 moodboards","Pick typefaces (display + body)","Define a small color token set","Wireframe Home, Project detail, About/Contact"],
+  tools:[
+    {name:"v0.dev", why:"Generates real React + Tailwind component code from a design prompt, so design and implementation aren't separate steps.", alt:"Galileo AI"},
+    {name:"Midjourney", why:"Useful for hero imagery, abstract backgrounds, or mood exploration when you want a distinct visual identity.", alt:"Adobe Firefly"}
+  ],
+  prompts:["Design a minimal, dark-mode developer portfolio hero section in React + Tailwind. Style: geometric sans display type, one accent color, generous whitespace. No stock gradient-hero cliché."],
+  best:["Pick one signature visual element and keep everything else restrained","Test your type/color choices on mobile widths early"],
+  mistakes:["Copying a trending template wholesale — it reads as generic to recruiters who see many portfolios","Choosing 4+ accent colors instead of committing to one"],
+  outputs:["A token sheet (colors, type scale, spacing)","Low-fi wireframes for 3 core screens"],
+  tips:["Screenshot your wireframe and feed it back to an AI tool asking for critique before you build — cheap round of feedback"]
+},
+{
+  id:"setup", num:"03", title:"Project Setup", time:"1 hr",
+  objectives:["Stand up a clean, modern React project","Configure tooling so later stages move fast"],
+  tasks:["Scaffold with Vite (React + TypeScript)","Set up ESLint, Prettier, Tailwind","Init git repo + connect to GitHub","Configure folder structure (components, pages, assets)"],
+  tools:[
+    {name:"GitHub Copilot", why:"Speeds up boilerplate config files (eslintrc, tailwind.config) which are tedious but low-creativity.", alt:"Claude Code"},
+    {name:"Claude", why:"Good for explaining and troubleshooting config errors in plain language when Vite/Tailwind setup breaks.", alt:"Stack Overflow + ChatGPT"}
+  ],
+  prompts:["Generate a Vite + React + TypeScript + Tailwind starter config with ESLint and Prettier pre-configured for a portfolio site. Explain each config choice briefly."],
+  best:["Commit the empty scaffold before adding features, so you have a clean baseline to diff against","Lock dependency versions early to avoid mid-build breakage"],
+  mistakes:["Skipping linting setup 'to save time' — costs more time later","Mixing CSS approaches (Tailwind + plain CSS + CSS-in-JS) without a plan"],
+  outputs:["A running local dev server","A GitHub repo with clean initial commit"],
+  tips:["Add a README stub now — future-you filling it in later is a task that keeps getting skipped"]
+},
+{
+  id:"build", num:"04", title:"Core Build", time:"6–9 hrs",
+  objectives:["Implement all core pages and components","Wire up routing and responsive layout"],
+  tasks:["Build Navbar, Hero, Project cards, About, Contact form","Implement routing (React Router or file-based)","Make it responsive across breakpoints","Wire up dark mode toggle"],
+  tools:[
+    {name:"Claude", why:"Handles multi-file component generation and can reason about component structure/state, not just single snippets.", alt:"GPT-4/5 class model"},
+    {name:"GitHub Copilot", why:"Best for fast in-flow autocomplete once component structure is decided — reduces repetitive typing.", alt:"Cursor"}
+  ],
+  prompts:["Build a responsive ProjectCard component in React + TypeScript + Tailwind. Props: title, description, tags[], image, repoUrl, liveUrl. Include hover state and accessible focus styles."],
+  best:["Build one component at a time and verify in-browser before moving on","Keep components small and typed — easier for AI tools to help debug later"],
+  mistakes:["Pasting entire app context into every prompt instead of the relevant component — leads to vague, unfocused suggestions","Ignoring accessibility (missing alt text, poor contrast, no keyboard nav) until the end"],
+  outputs:["All core pages functional and responsive","Component library with consistent styling"],
+  tips:["Ask AI tools to review a finished component for accessibility issues specifically — a separate, targeted pass catches more"]
+},
+{
+  id:"content", num:"05", title:"Content & Polish", time:"3–4 hrs",
+  objectives:["Fill every section with real, well-written content","Add motion and micro-interactions","Optimize performance and SEO basics"],
+  tasks:["Write project case-study copy","Add meta tags, favicon, OpenGraph image","Add scroll/hover animations","Run Lighthouse and fix flagged issues"],
+  tools:[
+    {name:"Claude", why:"Strong at editing your project write-ups for clarity and tone without making them sound AI-generated or generic.", alt:"ChatGPT"},
+    {name:"Framer Motion (with AI-assisted prompts)", why:"Declarative animation API that AI tools can scaffold quickly from a plain-English description of the motion you want.", alt:"GSAP"}
+  ],
+  prompts:["Here's my project case-study draft: [paste]. Tighten it to under 150 words, keep it specific and concrete, remove filler adjectives, and make the impact/result clear."],
+  best:["Write content in your own voice first, then use AI to tighten — not the reverse","Run Lighthouse before and after each major content addition to catch regressions early"],
+  mistakes:["Letting AI fully draft your About section — recruiters can often tell, and it undercuts authenticity","Adding animation everywhere instead of a few deliberate moments"],
+  outputs:["Finished copy across all pages","Lighthouse score 90+ on Performance and Accessibility"],
+  tips:["Keep a running notes list of 'nice to have later' polish items instead of scope-creeping the current pass"]
+},
+{
+  id:"deploy", num:"06", title:"Deploy & Promote", time:"1–2 hrs",
+  objectives:["Ship to production on a custom domain","Get the portfolio in front of the right people"],
+  tasks:["Deploy to Vercel/Netlify","Connect custom domain + HTTPS","Set up analytics","Share on LinkedIn, GitHub profile, relevant communities"],
+  tools:[
+    {name:"Vercel", why:"Zero-config deploys for Vite/React projects with automatic preview URLs per PR — fastest path to a live link.", alt:"Netlify"},
+    {name:"Claude", why:"Good for drafting a concise, non-cringe launch post tailored to LinkedIn vs. Twitter/X audiences.", alt:"Copy.ai"}
+  ],
+  prompts:["Write 2 short LinkedIn posts announcing my new portfolio site at [url]. Audience: recruiters and fellow developers. Tone: confident, not salesy. Under 100 words each."],
+  best:["Test the live site on an actual phone, not just devtools responsive mode","Add the portfolio link to GitHub bio, resume, and LinkedIn on launch day, all at once"],
+  mistakes:["Launching without testing the contact form actually sends/receives","Posting once and never resurfacing the link again"],
+  outputs:["Live site on a custom domain","At least one promotional post published"],
+  tips:["Set a calendar reminder to revisit and add a new project every 2–3 months — a stale portfolio is worse than a small one"]
+}
+];
+
+const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; };
+
+// build sidebar nav + pipeline + stage cards
+const nav = document.getElementById('stageNav');
+const pipeline = document.getElementById('pipeline');
+const stagesEl = document.getElementById('stages');
+const done = JSON.parse(localStorage.getItem('awa_done') || '{}');
+
+STAGES.forEach((s, i) => {
+  // sidebar
+  const link = el('div', 'stage-link' + (done[s.id] ? ' done' : ''), `<span class="node">${s.num}</span><span>${s.title}</span><span class="stage-check">${done[s.id] ? '✓' : ''}</span>`);
+  link.dataset.jump = s.id;
+  nav.appendChild(link);
+
+  // pipeline
+  const pn = el('div', 'pnode' + (done[s.id] ? ' on' : ''), `<div class="dot"></div><div class="lbl">${s.title}</div><div class="sub">${s.time}</div>`);
+  pipeline.appendChild(pn);
+  if (i < STAGES.length - 1) pipeline.appendChild(el('div', 'pconn'));
+
+  // stage card
+  const card = el('section', 'stage');
+  card.id = s.id;
+  card.innerHTML = `
+    <div class="stage-head">
+      <div class="stage-head-l">
+        <span class="stage-num">${s.num}</span>
+        <h2>${s.title}</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="stage-time">⏱ ${s.time}</span>
+        <button class="done-btn ${done[s.id] ? 'active' : ''}" data-done="${s.id}">${done[s.id] ? '✓ Done' : 'Mark done'}</button>
+        <button class="stage-toggle" data-toggle="${s.id}">▾</button>
+      </div>
+    </div>
+    <div class="stage-body" id="body-${s.id}">
+      <div class="grid2">
+        <div class="block"><h4>🎯 Objectives</h4><ul>${s.objectives.map(o=>`<li>${o}</li>`).join('')}</ul></div>
+        <div class="block"><h4>✅ Tasks</h4><ul>${s.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      </div>
+      <div class="block"><h4>🛠 Best AI Tools</h4>
+        ${s.tools.map(t=>`<div class="tool-card"><div class="t-name">${t.name} <span class="tag">alt: ${t.alt}</span></div><div class="t-why">${t.why}</div></div>`).join('')}
+      </div>
+      <div class="block"><h4>💬 Prompt Examples</h4>
+        ${s.prompts.map(p=>`<div class="prompt-box">${p}<button class="copy-btn" data-copy>Copy</button></div>`).join('')}
+      </div>
+      <div class="grid2">
+        <div class="block"><h4>👍 Best Practices</h4>${s.best.map(b=>`<div class="callout tip">${b}</div>`).join('')}</div>
+        <div class="block"><h4>⚠ Common Mistakes</h4>${s.mistakes.map(m=>`<div class="callout mistake">${m}</div>`).join('')}</div>
+      </div>
+      <div class="grid2">
+        <div class="block"><h4>📦 Expected Outputs</h4><ul>${s.outputs.map(o=>`<li>${o}</li>`).join('')}</ul></div>
+        <div class="block"><h4>⚡ Efficiency Tips</h4><ul>${s.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      </div>
+      <div class="block notes"><h4>📝 Notes &amp; Bookmarks</h4><textarea placeholder="Jot notes for this stage..." data-notes="${s.id}"></textarea></div>
+    </div>
+  `;
+  stagesEl.appendChild(card);
+});
+
+// decision tree + tool comparison inserted into Setup stage area (after build stage list) — append a standalone block before summary
+const decisionBlock = el('section', 'stage');
+decisionBlock.innerHTML = `
+  <div class="stage-head"><div class="stage-head-l"><span class="stage-num">DT</span><h2>Decision Tree: Which Build Approach?</h2></div></div>
+  <div class="stage-body">
+    <div class="dtree">
+      <div class="dq">Do you need blog/MDX content or server-rendered SEO pages?</div>
+      <div class="dopts">
+        <button class="dopt" data-r="Use Next.js instead of plain Vite — you get file-based routing, SSR, and easy MDX support.">Yes</button>
+        <button class="dopt" data-r="Stick with Vite + React Router — lighter, faster dev loop, no SSR overhead you don't need for a static portfolio.">No</button>
+      </div>
+      <div class="dresult" id="dtreeResult"></div>
+    </div>
+    <div class="block" style="margin-top:20px;">
+      <h4>📊 Tool Comparison</h4>
+      <table>
+        <tr><th>Tool</th><th>Best for</th><th>Cost</th><th>Learning curve</th></tr>
+        <tr><td>Claude</td><td>Multi-file components, content editing, debugging</td><td>Free tier + paid</td><td>Low</td></tr>
+        <tr><td>v0.dev</td><td>Fast UI scaffolding from prompts</td><td>Free tier + paid</td><td>Low</td></tr>
+        <tr><td>GitHub Copilot</td><td>In-editor autocomplete</td><td>Paid (student free)</td><td>Low</td></tr>
+        <tr><td>Midjourney</td><td>Custom hero/background imagery</td><td>Paid</td><td>Medium</td></tr>
+      </table>
+    </div>
+  </div>
+`;
+stagesEl.appendChild(decisionBlock);
+
+document.querySelectorAll('.dopt').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const r = document.getElementById('dtreeResult');
+    r.style.display='block'; r.textContent = b.dataset.r;
+  });
+});
+
+// mark done
+function updateProgressCount(){
+  const c = STAGES.filter(s=>done[s.id]).length;
+  document.getElementById('progressCount').textContent = c;
+}
+updateProgressCount();
+
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-done]');
+  if(btn){
+    const id = btn.dataset.done;
+    done[id] = !done[id];
+    localStorage.setItem('awa_done', JSON.stringify(done));
+    btn.classList.toggle('active', done[id]);
+    btn.textContent = done[id] ? '✓ Done' : 'Mark done';
+    document.querySelector(`.stage-link[data-jump="${id}"]`)?.classList.toggle('done', done[id]);
+    const check = document.querySelector(`.stage-link[data-jump="${id}"] .stage-check`);
+    if(check) check.textContent = done[id] ? '✓' : '';
+    updateProgressCount();
+  }
+  const jump = e.target.closest('[data-jump]');
+  if(jump){
+    document.getElementById(jump.dataset.jump)?.scrollIntoView({behavior:'smooth', block:'start'});
+    document.querySelectorAll('.stage-link').forEach(l=>l.classList.remove('active'));
+    jump.classList.add('active');
+  }
+  const toggle = e.target.closest('[data-toggle]');
+  if(toggle){
+    const body = document.getElementById('body-' + toggle.dataset.toggle);
+    const collapsed = body.style.display === 'none';
+    body.style.display = collapsed ? '' : 'none';
+    toggle.textContent = collapsed ? '▾' : '▸';
+  }
+  const copy = e.target.closest('[data-copy]');
+  if(copy){
+    const text = copy.parentElement.textContent.replace('Copy','').trim();
+    navigator.clipboard.writeText(text).then(()=>{
+      const old = copy.textContent; copy.textContent = 'Copied!';
+      setTimeout(()=>copy.textContent = old, 1200);
+    });
+  }
+});
+
+// notes persistence
+const notesStore = JSON.parse(localStorage.getItem('awa_notes') || '{}');
+document.querySelectorAll('[data-notes]').forEach(ta=>{
+  const key = ta.dataset.notes;
+  ta.value = notesStore[key] || '';
+  ta.addEventListener('input', ()=>{
+    notesStore[key] = ta.value;
+    localStorage.setItem('awa_notes', JSON.stringify(notesStore));
+  });
+});
+
+// theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const savedTheme = localStorage.getItem('awa_theme') || 'dark';
+document.body.dataset.theme = savedTheme;
+themeBtn.addEventListener('click', ()=>{
+  const next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.body.dataset.theme = next;
+  localStorage.setItem('awa_theme', next);
+});
+
+// print
+document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+// scroll-spy for active sidebar link
+const allSections = [...STAGES.map(s=>s.id), 'summary', 'resources'];
+window.addEventListener('scroll', ()=>{
+  let current = allSections[0];
+  for(const id of allSections){
+    const elx = document.getElementById(id);
+    if(elx && elx.getBoundingClientRect().top < 140) current = id;
+  }
+  document.querySelectorAll('.stage-link').forEach(l=>l.classList.toggle('active', l.dataset.jump === current));
+}, {passive:true});
+</script>
+</body>
+</html>
