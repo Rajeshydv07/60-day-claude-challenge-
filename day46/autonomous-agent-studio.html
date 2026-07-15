@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autonomous Agent Studio — Long-Form Article Newsroom</title>
+<style>
+:root{
+  --bg:#0e1015;
+  --bg-2:#141821;
+  --panel:#181c26;
+  --panel-2:#1e2330;
+  --line:#2a3040;
+  --paper:#f6f1e6;
+  --paper-line:#d9cfb8;
+  --ink:#e9e7e1;
+  --muted:#8b93a3;
+  --amber:#e3a13d;
+  --amber-dim:#8a6a34;
+  --teal:#5fb0a3;
+  --rose:#dd6a63;
+  --violet:#9b8cd8;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);}
+body{min-height:100vh;}
+::selection{background:var(--amber);color:#1a1a1a;}
+a{color:var(--amber);}
+
+/* ---------- Masthead ---------- */
+.masthead{
+  border-bottom:3px double var(--line);
+  padding:28px 24px 16px;
+  text-align:center;
+  background:linear-gradient(180deg, var(--bg-2), var(--bg));
+}
+.masthead .kicker{
+  font-family:var(--font-mono);
+  letter-spacing:.25em;
+  font-size:11px;
+  color:var(--amber);
+  text-transform:uppercase;
+}
+.masthead h1{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:clamp(28px,5vw,52px);
+  margin:8px 0 6px;
+  letter-spacing:.01em;
+}
+.masthead .sub{
+  color:var(--muted);
+  font-size:13px;
+  font-family:var(--font-mono);
+}
+.masthead .rule{
+  height:1px;
+  background:repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 10px);
+  margin-top:16px;
+}
+
+.wrap{max-width:1280px;margin:0 auto;padding:24px;}
+
+/* ---------- Setup panel ---------- */
+.setup-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:24px;
+  margin-bottom:24px;
+}
+.setup-card h2{margin-top:0;font-family:var(--font-display);font-size:22px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;font-family:var(--font-mono);}
+.field input, .field textarea{
+  width:100%;background:var(--bg-2);border:1px solid var(--line);color:var(--ink);
+  border-radius:6px;padding:10px 12px;font-family:var(--font-body);font-size:14px;
+}
+.field textarea{min-height:70px;resize:vertical;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:640px){.row2{grid-template-columns:1fr;}}
+
+.slider-row{display:flex;align-items:center;gap:12px;}
+.slider-row input[type=range]{flex:1;}
+.slider-val{font-family:var(--font-mono);color:var(--amber);min-width:38px;text-align:right;}
+
+.btn{
+  background:var(--amber);color:#1a1206;border:none;border-radius:6px;
+  padding:12px 22px;font-weight:700;font-size:14px;cursor:pointer;
+  font-family:var(--font-body);transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(227,161,61,.25);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--line);}
+.btn.danger{background:var(--rose);color:#2a0d0a;}
+
+/* ---------- Loop diagram ---------- */
+.loop-section{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:20px;margin-bottom:24px;
+}
+.loop-section h3{margin:0 0 4px;font-family:var(--font-display);font-size:18px;}
+.loop-section .desc{color:var(--muted);font-size:13px;margin-bottom:12px;}
+#loopSvgWrap{width:100%;overflow-x:auto;}
+.agent-node{transition:filter .25s ease;}
+.agent-node.active .node-circle{filter:drop-shadow(0 0 10px var(--amber));}
+.agent-node .node-circle{fill:var(--panel-2);stroke:var(--line);stroke-width:2;transition:stroke .25s, fill .25s;}
+.agent-node.active .node-circle{stroke:var(--amber);fill:#2a2314;}
+.agent-node.done .node-circle{stroke:var(--teal);}
+.agent-node text{fill:var(--ink);font-family:var(--font-body);}
+.agent-node .node-role{fill:var(--muted);font-size:9px;font-family:var(--font-mono);}
+.pulse-dot{fill:var(--amber);opacity:0;}
+.branch-line{stroke:var(--violet);stroke-width:2;stroke-dasharray:4 4;opacity:.4;}
+.branch-line.active{opacity:1;}
+
+/* ---------- Status bar ---------- */
+.status-bar{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:14px 20px;margin-bottom:24px;
+}
+.status-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.pill{
+  font-family:var(--font-mono);font-size:12px;padding:5px 12px;border-radius:20px;
+  background:var(--bg-2);border:1px solid var(--line);color:var(--muted);
+}
+.pill.live{color:var(--amber);border-color:var(--amber-dim);}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted);margin-right:6px;}
+.dot.on{background:var(--teal);box-shadow:0 0 6px var(--teal);animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ---------- Dashboard grid ---------- */
+.dash-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;}
+@media (max-width:900px){.dash-grid{grid-template-columns:1fr;}}
+.panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:20px;margin-bottom:24px;
+}
+.panel h3{margin:0 0 12px;font-family:var(--font-display);font-size:18px;display:flex;align-items:center;gap:8px;}
+.panel h3 .tag{font-family:var(--font-mono);font-size:10px;color:var(--muted);border:1px solid var(--line);padding:2px 8px;border-radius:12px;}
+
+/* draft / article preview like paper */
+.draft-paper{
+  background:var(--paper);color:#2a2013;border-radius:6px;padding:22px 26px;
+  font-family:var(--font-display);line-height:1.65;font-size:15px;
+  max-height:480px;overflow-y:auto;box-shadow:inset 0 0 0 1px var(--paper-line);
+  white-space:pre-wrap;
+}
+.draft-paper::-webkit-scrollbar{width:8px;}
+.draft-paper::-webkit-scrollbar-thumb{background:var(--paper-line);border-radius:4px;}
+
+/* activity log / wire ticker */
+.wire-log{
+  background:#0a0c11;border:1px solid var(--line);border-radius:6px;
+  padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:1.7;
+  max-height:260px;overflow-y:auto;
+}
+.wire-log .l{margin-bottom:4px;}
+.wire-log .l .t{color:var(--muted);}
+.wire-log .l.agent-planner .a{color:var(--violet);}
+.wire-log .l.agent-executor .a{color:var(--teal);}
+.wire-log .l.agent-evaluator .a{color:var(--amber);}
+.wire-log .l.agent-critic .a{color:var(--rose);}
+.wire-log .l.agent-improver .a{color:#7fd0ff;}
+.wire-log .l.agent-memory .a{color:#c9b3ff;}
+.wire-log .l.agent-final .a{color:#ffd27a;}
+.wire-log .l.sys .a{color:var(--muted);}
+
+/* history / rounds */
+.round-card{
+  border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px;
+  background:var(--panel-2);
+}
+.round-card .round-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.round-card .round-head .rname{font-family:var(--font-mono);font-size:12px;color:var(--amber);}
+.round-card .round-head .rdelta{font-family:var(--font-mono);font-size:12px;}
+.rdelta.up{color:var(--teal);}
+.rdelta.flat{color:var(--muted);}
+.score-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+.score-item{font-family:var(--font-mono);font-size:11px;}
+.score-item .lbl{color:var(--muted);display:block;margin-bottom:2px;}
+.score-track{height:5px;background:var(--bg-2);border-radius:3px;overflow:hidden;}
+.score-fill{height:100%;background:var(--amber);border-radius:3px;transition:width .5s ease;}
+.composite-line{font-family:var(--font-mono);font-size:13px;margin-bottom:6px;}
+.composite-line b{color:var(--ink);font-size:16px;}
+.round-text{font-size:13px;color:var(--muted);max-height:120px;overflow-y:auto;white-space:pre-wrap;}
+.round-toggle{cursor:pointer;color:var(--amber);font-family:var(--font-mono);font-size:11px;margin-top:6px;display:inline-block;}
+
+/* memory notes */
+.memory-note{
+  border-left:3px solid var(--violet);padding:8px 12px;margin-bottom:8px;
+  background:var(--panel-2);font-size:13px;color:var(--ink);border-radius:0 6px 6px 0;
+}
+.memory-note .mtitle{font-family:var(--font-mono);font-size:11px;color:var(--violet);margin-bottom:4px;}
+
+/* stop banner */
+.stop-banner{
+  border:1px solid var(--teal);background:rgba(95,176,163,.08);border-radius:8px;
+  padding:16px 20px;margin-bottom:24px;
+}
+.stop-banner h4{margin:0 0 6px;font-family:var(--font-display);color:var(--teal);font-size:16px;}
+.stop-banner p{margin:0;color:var(--ink);font-size:13px;}
+
+/* final summary */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+@media (max-width:640px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-box{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:14px;text-align:center;}
+.stat-box .num{font-family:var(--font-display);font-size:26px;color:var(--amber);}
+.stat-box .lbl{font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+
+.agent-desc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.agent-desc{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;}
+.agent-desc .aname{font-family:var(--font-mono);font-size:12px;margin-bottom:4px;}
+.agent-desc .adesc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+.extend-list{padding-left:18px;color:var(--muted);font-size:13px;line-height:1.8;}
+.extend-list li b{color:var(--ink);}
+
+.error-box{
+  border:1px solid var(--rose);background:rgba(221,106,99,.08);border-radius:8px;
+  padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--rose);
+}
+
+footer{text-align:center;padding:30px;color:var(--muted);font-family:var(--font-mono);font-size:11px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="kicker">Multi-Agent Orchestration · Live API Loop</div>
+  <h1>Autonomous Agent Studio</h1>
+  <div class="sub">The Long-Form Desk — plan · draft · evaluate · critique · improve · repeat</div>
+  <div class="rule"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- SETUP -->
+  <div class="setup-card" id="setupCard">
+    <h2>Assignment brief</h2>
+    <div class="row2">
+      <div class="field">
+        <label>Topic</label>
+        <input id="topicInput" type="text" placeholder="e.g. The hidden economics of vertical farming" value="The real cost of fast fashion's supply chain">
+      </div>
+      <div class="field">
+        <label>Target audience</label>
+        <input id="audienceInput" type="text" placeholder="e.g. curious generalists, policy readers" value="Educated general readers who follow business & sustainability news">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Quality threshold (composite score to stop at)</label>
+        <div class="slider-row">
+          <input type="range" id="thresholdSlider" min="60" max="98" value="85">
+          <span class="slider-val" id="thresholdVal">85</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Hard iteration cap (safety fallback)</label>
+        <div class="slider-row">
+          <input type="range" id="capSlider" min="3" max="12" value="8">
+          <span class="slider-val" id="capVal">8</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn" id="runBtn">Run agent pipeline</button>
+      <button class="btn secondary" id="stopBtn" disabled>Stop run</button>
+      <button class="btn secondary" id="resetBtn">Reset</button>
+    </div>
+    <div id="errorArea"></div>
+  </div>
+
+  <!-- LOOP DIAGRAM -->
+  <div class="loop-section">
+    <h3>Workflow — the improvement cycle</h3>
+    <div class="desc">Planner and Executor run once to seed the draft. Evaluator → Critic → Improver → Memory Manager then repeat every round — a real return arrow, not a straight pipeline — until a stop condition fires and control branches out to the Final Reviewer.</div>
+    <div id="loopSvgWrap"></div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-left">
+      <span class="pill"><span class="dot" id="liveDot"></span><span id="statusText">Idle — awaiting brief</span></span>
+      <span class="pill" id="activeAgentPill">Active agent: —</span>
+      <span class="pill" id="roundPill">Round: —</span>
+    </div>
+    <div class="status-left">
+      <span class="pill" id="retryPill">Retries: 0</span>
+      <span class="pill live" id="scorePill">Composite: —</span>
+    </div>
+  </div>
+
+  <div id="stopBannerArea"></div>
+
+  <!-- DASHBOARD -->
+  <div class="dash-grid">
+    <div>
+      <div class="panel">
+        <h3>Current draft <span class="tag" id="draftTag">not started</span></h3>
+        <div class="draft-paper" id="draftArea">The manuscript will appear here once Executor writes the first draft…</div>
+      </div>
+
+      <div class="panel">
+        <h3>Iteration history <span class="tag" id="historyTag">0 rounds</span></h3>
+        <div id="historyArea"><p style="color:var(--muted);font-size:13px;">No rounds completed yet.</p></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Activity log <span class="tag">wire feed</span></h3>
+        <div class="wire-log" id="wireLog"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Memory updates <span class="tag" id="memoryTag">0 notes</span></h3>
+        <div id="memoryArea"><p style="color:var(--muted);font-size:13px;">Memory Manager notes will appear here after round 1.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL SUMMARY -->
+  <div id="finalSummaryArea"></div>
+
+  <!-- AGENT EXPLAINER -->
+  <div class="panel">
+    <h3>Agent roster & responsibilities</h3>
+    <div class="agent-desc-grid">
+      <div class="agent-desc"><div class="aname" style="color:var(--violet)">Planner</div><div class="adesc">Reads the topic + audience and produces a structural outline: angle, sections, and the evidence each section needs. Runs once, before drafting begins.</div></div>
+      <div class="agent-desc"><div class="aname" style="color:var(--teal)">Executor</div><div class="adesc">Writes the first full draft from the Planner's outline. Runs once, seeding the loop.</div></div>
+      <div class="agent-desc"><div class="aname" style="color:var(--amber)">Evaluator</div><div class="adesc">Scores the current draft against a four-part rubric (clarity, depth, accuracy, engagement) and returns a strict JSON verdict every round.</div></div>
+      <div class="agent-desc"><div class="aname" style="color:var(--rose)">Critic</div><div class="adesc">Takes the Evaluator's verdict and the draft, and writes a prioritized, actionable critique — what's weakest and exactly what to fix.</div></div>
+      <div class="agent-desc"><div class="aname" style="color:#7fd0ff">Improver</div><div class="adesc">Receives the prior draft, the evaluation, and the critique, and produces a revised full draft. This is the only agent allowed to rewrite the manuscript.</div></div>
+      <div class="agent-desc"><div class="aname" style="color:#c9b3ff">Memory Manager</div><div class="adesc">Summarizes what changed this round and what pattern to carry forward, so later rounds don't re-litigate settled decisions.</div></div>
+      <div class="agent-desc"><div class="aname" style="color:#ffd27a">Final Reviewer</div><div class="adesc">Runs once a stop condition fires. Proofreads the winning draft, confirms it actually earns its score, and writes the closing QA note.</div></div>
+    </div>
+    <p style="color:var(--muted);font-size:12.5px;margin-top:14px;line-height:1.6;">
+      <b style="color:var(--ink);">How the stop-check governs information flow:</b> after every Evaluator→Critic→Improver→Memory pass, the orchestrator checks three conditions in order — (1) <b style="color:var(--ink)">plateau</b>: composite score gained less than 3 points for two consecutive rounds; (2) <b style="color:var(--ink)">threshold</b>: composite score has crossed the target set in the brief; (3) <b style="color:var(--ink)">hard cap</b>: a safety-only ceiling on rounds. Whichever fires first ends the loop and the exact reason is logged and shown below. Only then does control branch to the Final Reviewer — evaluation state never reaches the reviewer mid-loop.
+    </p>
+  </div>
+
+  <!-- EXTENSION IDEAS -->
+  <div class="panel" id="extendPanel" style="display:none;">
+    <h3>Extension ideas & further prompts</h3>
+    <ul class="extend-list">
+      <li><b>Add a Safety Monitor agent</b> — run it in parallel with the Evaluator to flag unverifiable claims or biased framing before the Critic sees the draft.</li>
+      <li><b>Parallel drafts:</b> run 2–3 Executor drafts from the same outline and have the Evaluator pick a winner before entering the improvement loop.</li>
+      <li><b>Source grounding:</b> give the Planner a web-search tool so the outline cites real, checkable sources instead of Claude's own knowledge.</li>
+      <li><b>Human-in-the-loop gate:</b> pause after the Critic step and let a person approve or edit the critique before the Improver runs.</li>
+      <li><b>Multi-format fan-out:</b> once the article passes, add a "Repurposer" agent that turns the final draft into a thread, a newsletter blurb, and a slide outline.</li>
+      <li><b>Try asking:</b> "Add a Safety Monitor that runs a fact-check pass on every third round" or "Make the stopping condition a weighted rubric where accuracy counts double."</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>Autonomous Agent Studio — every score, critique, and draft on this page is a live model response, generated at runtime.</footer>
+
+<script>
+(function(){
+
+const CLAUDE_MODEL = "claude-sonnet-4-6";
+const API_URL = "https://api.anthropic.com/v1/messages";
+
+// ---------- state ----------
+let state = {
+  running:false,
+  stopped:false,
+  round:0,
+  retries:0,
+  outline:"",
+  currentDraft:"",
+  history:[], // {round, breakdown, composite, evalSummary, critique, deltaFromPrev}
+  memoryNotes:[],
+  threshold:85,
+  hardCap:8,
+  topic:"",
+  audience:"",
+  finalArticle:"",
+  finalNote:""
+};
+
+// ---------- DOM refs ----------
+const $ = id => document.getElementById(id);
+const runBtn = $("runBtn"), stopBtn = $("stopBtn"), resetBtn = $("resetBtn");
+const thresholdSlider = $("thresholdSlider"), thresholdVal = $("thresholdVal");
+const capSlider = $("capSlider"), capVal = $("capVal");
+const statusText = $("statusText"), liveDot = $("liveDot");
+const activeAgentPill = $("activeAgentPill"), roundPill = $("roundPill");
+const retryPill = $("retryPill"), scorePill = $("scorePill");
+const draftArea = $("draftArea"), draftTag = $("draftTag");
+const historyArea = $("historyArea"), historyTag = $("historyTag");
+const wireLog = $("wireLog");
+const memoryArea = $("memoryArea"), memoryTag = $("memoryTag");
+const stopBannerArea = $("stopBannerArea");
+const finalSummaryArea = $("finalSummaryArea");
+const errorArea = $("errorArea");
+const extendPanel = $("extendPanel");
+
+thresholdSlider.addEventListener("input", ()=> thresholdVal.textContent = thresholdSlider.value);
+capSlider.addEventListener("input", ()=> capVal.textContent = capSlider.value);
+
+// ---------- loop diagram (SVG) ----------
+const AGENTS = [
+  {id:"planner", label:"Planner", role:"outline", x:110, y:70},
+  {id:"executor", label:"Executor", role:"first draft", x:330, y:70},
+  {id:"evaluator", label:"Evaluator", role:"rubric score", x:490, y:200},
+  {id:"critic", label:"Critic", role:"critique", x:410, y:340},
+  {id:"improver", label:"Improver", role:"revise", x:200, y:340},
+  {id:"memory", label:"Memory Mgr", role:"log & carry", x:60, y:200},
+  {id:"final", label:"Final Reviewer", role:"polish", x:620, y:340}
+];
+
+function buildLoopSvg(){
+  const w=700,h=430;
+  let nodes = AGENTS.map(a=>`
+    <g class="agent-node" id="node-${a.id}" transform="translate(${a.x},${a.y})">
+      <circle class="node-circle" r="42" cx="0" cy="0"></circle>
+      <text x="0" y="-2" text-anchor="middle" font-size="12" font-weight="600">${a.label}</text>
+      <text class="node-role" x="0" y="14" text-anchor="middle">${a.role}</text>
+    </g>`).join("");
+
+  // cycle path: evaluator -> critic -> improver -> memory -> evaluator (return arrow)
+  const cyclePath = `M 490,200 
+    C 470,270 450,310 410,340
+    C 350,365 260,365 200,340
+    C 130,315 80,270 60,200
+    C 80,140 130,95 200,70`;
+  // planner -> executor -> evaluator (seed path, once)
+  const seedPath = `M 152,70 L 288,70 M 372,80 C 420,110 460,150 490,200`;
+  // branch to final reviewer
+  const branchPath = `M 240,340 C 350,400 500,400 578,352`;
+
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:760px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--amber)"></path>
+      </marker>
+      <marker id="arrowMuted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--muted)"></path>
+      </marker>
+    </defs>
+    <path d="${seedPath}" fill="none" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrowMuted)" opacity="0.55"/>
+    <path id="cyclePath" d="${cyclePath}" fill="none" stroke="var(--line)" stroke-width="2.5" marker-end="url(#arrowMuted)"/>
+    <path id="branchPath" class="branch-line" d="${branchPath}" fill="none" marker-end="url(#arrowMuted)"/>
+    <circle class="pulse-dot" id="pulseDot" r="5"></circle>
+    ${nodes}
+  </svg>`;
+}
+$("loopSvgWrap").innerHTML = buildLoopSvg();
+
+function setActiveAgent(id){
+  AGENTS.forEach(a=>{
+    const n = document.getElementById("node-"+a.id);
+    if(!n) return;
+    n.classList.remove("active");
+  });
+  if(id){
+    const n = document.getElementById("node-"+id);
+    if(n) n.classList.add("active");
+    activeAgentPill.textContent = "Active agent: " + AGENTS.find(a=>a.id===id).label;
+  } else {
+    activeAgentPill.textContent = "Active agent: —";
+  }
+}
+function markDone(id){
+  const n = document.getElementById("node-"+id);
+  if(n) n.classList.add("done");
+}
+function activateBranch(){
+  const b = document.getElementById("branchPath");
+  if(b) b.classList.add("active");
+}
+
+// ---------- logging ----------
+function log(agentClass, agentLabel, msg){
+  const div = document.createElement("div");
+  div.className = "l " + agentClass;
+  const time = new Date().toLocaleTimeString();
+  div.innerHTML = `<span class="t">[${time}]</span> <span class="a">${agentLabel}:</span> ${escapeHtml(msg)}`;
+  wireLog.appendChild(div);
+  wireLog.scrollTop = wireLog.scrollHeight;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function setStatus(text, live){
+  statusText.textContent = text;
+  liveDot.classList.toggle("on", !!live);
+}
+
+// ---------- API call helper with retry ----------
+async function callClaude(system, userContent, {json=false, maxTokens=2000, agentIdForRetryPill}={}){
+  let attempt = 0;
+  const maxAttempts = 3;
+  while(attempt < maxAttempts){
+    try{
+      const resp = await fetch(API_URL, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          model: CLAUDE_MODEL,
+          max_tokens: maxTokens,
+          system: system,
+          messages: [{role:"user", content: userContent}]
+        })
+      });
+      if(!resp.ok){
+        throw new Error("API responded with status " + resp.status);
+      }
+      const data = await resp.json();
+      const textBlocks = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text);
+      let text = textBlocks.join("\n").trim();
+      if(!text){
+        throw new Error("Empty response from model");
+      }
+      if(json){
+        text = text.replace(/```json/gi,"").replace(/```/g,"").trim();
+      }
+      return text;
+    }catch(err){
+      attempt++;
+      state.retries++;
+      retryPill.textContent = "Retries: " + state.retries;
+      log("sys","System", `Call failed (attempt ${attempt}/${maxAttempts}): ${err.message}. ${attempt<maxAttempts ? "Retrying…" : "Giving up on this call."}`);
+      if(attempt >= maxAttempts) throw err;
+      await new Promise(r=>setTimeout(r, 600*attempt));
+    }
+  }
+}
+
+// ---------- system prompts ----------
+const SYS_PLANNER = `You are Planner, the assigning editor at a serious long-form publication. Given a topic and a target audience, produce a tight editorial outline for a research-backed long-form article. Your output must include: (1) a one-sentence angle/thesis, (2) 4-7 named sections with a one-line description of what each covers, (3) for each section, the type of evidence or example it needs (data, anecdote, expert framing, historical precedent, etc). Write in plain prose with clear section labels. Do not write the article itself. Be concrete and specific to the topic, never generic.`;
+
+const SYS_EXECUTOR = `You are Executor, a staff writer. Given an editorial outline and the target audience, write the first full draft of the long-form article. Follow the outline's sections and thesis. Write real, specific, well-organized prose of substantial length (roughly 600-900 words), with a clear headline at the top. Do not include meta-commentary about the writing process — output only the article itself.`;
+
+const SYS_EVALUATOR = `You are Evaluator, a rigorous quality-control editor. You will be given the current draft, the target audience, and the rubric. Score the draft on four criteria, each 0-25: clarity, depth, accuracy, engagement. Composite is the sum (0-100).
+Respond with ONLY a single valid JSON object, no markdown fences, no commentary outside the JSON, in exactly this shape:
+{"clarity": <0-25 integer>, "depth": <0-25 integer>, "accuracy": <0-25 integer>, "engagement": <0-25 integer>, "composite": <0-100 integer>, "summary": "<2-3 sentence verdict explaining the score>"}`;
+
+const SYS_CRITIC = `You are Critic, a sharp developmental editor. You will be given the current draft and the Evaluator's JSON verdict. Write a prioritized, actionable critique: the 3-5 most important weaknesses to fix next, ordered by impact, each as a short imperative instruction (what to change and why). Do not rewrite the article. Do not praise excessively — be direct and specific. Keep it under 200 words.`;
+
+const SYS_IMPROVER = `You are Improver, the senior writer who revises based on editorial feedback. You will be given the prior draft, the Evaluator's verdict, and the Critic's prioritized critique. Produce a complete revised draft that addresses every point in the critique while preserving what already works. Output only the full revised article (headline plus body), no meta-commentary, no explanation of changes.`;
+
+const SYS_MEMORY = `You are Memory Manager. You will be given the round number, the Evaluator's verdict, and the Critic's critique for this round. Write a short memory note (2-3 sentences, plain text) summarizing what changed or was decided this round and what should be carried forward so future rounds do not re-litigate it. Be concrete, not generic.`;
+
+const SYS_FINAL = `You are Final Reviewer, the closing editor. You will be given the final draft that met the stop condition, its last evaluation, and the stop reason. Lightly proofread and polish the draft for publication (fix any awkward phrasing, tighten the opening and closing, ensure headline quality) without changing its substance or length significantly. Then, on a new line starting with "QA NOTE:", write a 2-3 sentence closing quality-assurance note confirming the draft earns its score and is ready to publish. Output the polished article first, then the QA NOTE line.`;
+
+// ---------- rendering ----------
+function renderDraft(text, tag){
+  draftArea.textContent = text;
+  draftTag.textContent = tag;
+}
+
+function renderHistory(){
+  historyTag.textContent = state.history.length + " round" + (state.history.length===1?"":"s");
+  if(state.history.length===0){
+    historyArea.innerHTML = `<p style="color:var(--muted);font-size:13px;">No rounds completed yet.</p>`;
+    return;
+  }
+  historyArea.innerHTML = state.history.map((h, idx)=>{
+    const deltaClass = h.delta > 0 ? "up" : "flat";
+    const deltaText = idx===0 ? "seed" : (h.delta>=0?"+":"") + h.delta;
+    const bars = ["clarity","depth","accuracy","engagement"].map(k=>{
+      const v = h.breakdown[k]||0;
+      return `<div class="score-item"><span class="lbl">${k}</span><div class="score-track"><div class="score-fill" style="width:${(v/25*100)}%"></div></div></div>`;
+    }).join("");
+    return `<div class="round-card">
+      <div class="round-head">
+        <span class="rname">Round ${h.round}</span>
+        <span class="rdelta ${deltaClass}">Δ ${deltaText}</span>
+      </div>
+      <div class="composite-line">Composite: <b>${h.composite}</b> / 100</div>
+      <div class="score-bars">${bars}</div>
+      <div class="round-text"><b style="color:var(--ink)">Evaluator:</b> ${escapeHtml(h.evalSummary)}\n\n<b style="color:var(--ink)">Critic:</b> ${escapeHtml(h.critique)}</div>
+    </div>`;
+  }).reverse().join("");
+}
+
+function renderMemory(){
+  memoryTag.textContent = state.memoryNotes.length + " note" + (state.memoryNotes.length===1?"":"s");
+  if(state.memoryNotes.length===0){
+    memoryArea.innerHTML = `<p style="color:var(--muted);font-size:13px;">Memory Manager notes will appear here after round 1.</p>`;
+    return;
+  }
+  memoryArea.innerHTML = state.memoryNotes.map(m=>`
+    <div class="memory-note"><div class="mtitle">ROUND ${m.round}</div>${escapeHtml(m.note)}</div>
+  `).reverse().join("");
+}
+
+function renderStopBanner(reason, detail){
+  stopBannerArea.innerHTML = `<div class="stop-banner">
+    <h4>Loop stopped — ${reason}</h4>
+    <p>${escapeHtml(detail)}</p>
+  </div>`;
+}
+
+function renderFinalSummary(){
+  const rounds = state.history.length;
+  const startScore = rounds ? state.history[0].composite : 0;
+  const endScore = rounds ? state.history[rounds-1].composite : 0;
+  const gain = endScore - startScore;
+  finalSummaryArea.innerHTML = `
+  <div class="panel">
+    <h3>Final output</h3>
+    <div class="draft-paper">${escapeHtml(state.finalArticle)}</div>
+  </div>
+  <div class="panel">
+    <h3>Agent performance summary & execution stats</h3>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="num">${rounds}</div><div class="lbl">Rounds run</div></div>
+      <div class="stat-box"><div class="num">${startScore}→${endScore}</div><div class="lbl">Composite score</div></div>
+      <div class="stat-box"><div class="num">+${gain}</div><div class="lbl">Net improvement</div></div>
+      <div class="stat-box"><div class="num">${state.retries}</div><div class="lbl">API retries</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--ink);"><b>Final Reviewer QA note:</b> ${escapeHtml(state.finalNote)}</p>
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.6;"><b style="color:var(--ink)">Architecture overview:</b> Planner and Executor ran once to seed a draft from the brief. Each subsequent round made three live API calls in sequence (Evaluator → Critic → Improver) plus a Memory Manager call, with the full prior evaluation and critique threaded into the next Improver call as context. The stop-check ran after every round in fixed priority — plateau, then threshold, then hard cap — and the first one to fire ended the loop and branched to a single Final Reviewer call.</p>
+  </div>`;
+  extendPanel.style.display = "block";
+}
+
+// ---------- orchestration ----------
+async function runPipeline(){
+  state.running = true;
+  state.stopped = false;
+  state.round = 0;
+  state.retries = 0;
+  state.history = [];
+  state.memoryNotes = [];
+  errorArea.innerHTML = "";
+  stopBannerArea.innerHTML = "";
+  finalSummaryArea.innerHTML = "";
+  extendPanel.style.display = "none";
+  wireLog.innerHTML = "";
+  historyArea.innerHTML = `<p style="color:var(--muted);font-size:13px;">No rounds completed yet.</p>`;
+  memoryArea.innerHTML = `<p style="color:var(--muted);font-size:13px;">Memory Manager notes will appear here after round 1.</p>`;
+  retryPill.textContent = "Retries: 0";
+  scorePill.textContent = "Composite: —";
+  roundPill.textContent = "Round: —";
+
+  state.topic = $("topicInput").value.trim() || "Untitled topic";
+  state.audience = $("audienceInput").value.trim() || "General readers";
+  state.threshold = parseInt(thresholdSlider.value,10);
+  state.hardCap = parseInt(capSlider.value,10);
+
+  runBtn.disabled = true;
+  stopBtn.disabled = false;
+  resetBtn.disabled = true;
+
+  try{
+    // ---- Planner ----
+    setStatus("Planner is outlining the article…", true);
+    setActiveAgent("planner");
+    log("agent-planner","Planner", `Received brief — topic: "${state.topic}" / audience: "${state.audience}". Building outline…`);
+    const outline = await callClaude(SYS_PLANNER, `Topic: ${state.topic}\nTarget audience: ${state.audience}`);
+    state.outline = outline;
+    markDone("planner");
+    log("agent-planner","Planner", "Outline complete.");
+
+    if(state.stopped) return finishAbort();
+
+    // ---- Executor ----
+    setStatus("Executor is writing the first draft…", true);
+    setActiveAgent("executor");
+    log("agent-executor","Executor", "Drafting article from outline…");
+    const draft0 = await callClaude(SYS_EXECUTOR, `Outline:\n${outline}\n\nTarget audience: ${state.audience}`, {maxTokens:2200});
+    state.currentDraft = draft0;
+    markDone("executor");
+    renderDraft(draft0, "draft v0");
+    log("agent-executor","Executor", "First draft complete. Entering evaluation loop.");
+
+    if(state.stopped) return finishAbort();
+
+    // ---- Improvement loop ----
+    let prevComposite = null;
+    let plateauStreak = 0;
+    let stopReason = null;
+    let stopDetail = "";
+    let lastEval = null, lastCritique = null;
+
+    while(true){
+      if(state.stopped) return finishAbort();
+      state.round++;
+      roundPill.textContent = `Round ${state.round} — checking stop condition…`;
+
+      // Evaluator
+      setActiveAgent("evaluator");
+      setStatus(`Round ${state.round}: Evaluator scoring the draft…`, true);
+      log("agent-evaluator","Evaluator", `Scoring draft v${state.round-1}…`);
+      const evalRaw = await callClaude(
+        SYS_EVALUATOR,
+        `Target audience: ${state.audience}\n\nCurrent draft:\n${state.currentDraft}`,
+        {json:true, maxTokens:500}
+      );
+      let evalObj;
+      try{
+        evalObj = JSON.parse(evalRaw);
+      }catch(e){
+        log("sys","System", "Evaluator JSON parse failed, retrying with stricter instruction…");
+        const retryRaw = await callClaude(
+          SYS_EVALUATOR + " Reminder: output ONLY the JSON object, nothing else.",
+          `Target audience: ${state.audience}\n\nCurrent draft:\n${state.currentDraft}`,
+          {json:true, maxTokens:500}
+        );
+        evalObj = JSON.parse(retryRaw);
+      }
+      markDone("evaluator");
+      log("agent-evaluator","Evaluator", `Composite ${evalObj.composite}/100 — ${evalObj.summary}`);
+      scorePill.textContent = "Composite: " + evalObj.composite;
+
+      if(state.stopped) return finishAbort();
+
+      // Critic
+      setActiveAgent("critic");
+      setStatus(`Round ${state.round}: Critic identifying priority fixes…`, true);
+      log("agent-critic","Critic", "Reviewing draft against evaluation…");
+      const critique = await callClaude(
+        SYS_CRITIC,
+        `Evaluator verdict (JSON):\n${JSON.stringify(evalObj)}\n\nDraft:\n${state.currentDraft}`,
+        {maxTokens:500}
+      );
+      markDone("critic");
+      log("agent-critic","Critic", critique.split("\n")[0].slice(0,140) + (critique.length>140?"…":""));
+
+      // record history for this round (pre-improvement state)
+      const composite = evalObj.composite;
+      const delta = prevComposite===null ? 0 : (composite - prevComposite);
+      state.history.push({
+        round: state.round,
+        breakdown: evalObj,
+        composite: composite,
+        evalSummary: evalObj.summary,
+        critique: critique,
+        delta: delta
+      });
+      renderHistory();
+      lastEval = evalObj; lastCritique = critique;
+
+      // ---- stop checks, in priority order ----
+      // 1. plateau: gain < 3 for 2 consecutive rounds (needs at least 2 rounds of history)
+      if(prevComposite !== null){
+        if((composite - prevComposite) < 3){
+          plateauStreak++;
+        } else {
+          plateauStreak = 0;
+        }
+      }
+      if(plateauStreak >= 2){
+        stopReason = "Plateau reached";
+        stopDetail = `Composite score gained less than 3 points for 2 consecutive rounds (round ${state.round-1} → ${state.round}: ${prevComposite} → ${composite}). Further rounds are unlikely to add much value, so the loop stopped and handed off to Final Reviewer.`;
+      }
+      // 2. threshold
+      if(!stopReason && composite >= state.threshold){
+        stopReason = "Quality threshold crossed";
+        stopDetail = `Composite score ${composite} crossed the target threshold of ${state.threshold} set in the brief.`;
+      }
+      // 3. hard cap
+      if(!stopReason && state.round >= state.hardCap){
+        stopReason = "Hard iteration cap (safety fallback)";
+        stopDetail = `Reached the safety cap of ${state.hardCap} rounds without hitting plateau or threshold. Stopping here to bound cost/latency.`;
+      }
+
+      if(stopReason){
+        activateBranch();
+        renderStopBanner(stopReason, stopDetail);
+        break;
+      }
+
+      if(state.stopped) return finishAbort();
+
+      // Improver
+      setActiveAgent("improver");
+      setStatus(`Round ${state.round}: Improver revising the draft…`, true);
+      log("agent-improver","Improver", "Revising draft using evaluation + critique…");
+      const improved = await callClaude(
+        SYS_IMPROVER,
+        `Prior draft:\n${state.currentDraft}\n\nEvaluator verdict:\n${JSON.stringify(evalObj)}\n\nCritic feedback:\n${critique}`,
+        {maxTokens:2200}
+      );
+      markDone("improver");
+      state.currentDraft = improved;
+      renderDraft(improved, "draft v" + state.round);
+      log("agent-improver","Improver", "Revision complete.");
+
+      // Memory Manager
+      setActiveAgent("memory");
+      setStatus(`Round ${state.round}: Memory Manager logging progress…`, true);
+      const memNote = await callClaude(
+        SYS_MEMORY,
+        `Round: ${state.round}\nEvaluator verdict:\n${JSON.stringify(evalObj)}\n\nCritic feedback:\n${critique}`,
+        {maxTokens:200}
+      );
+      markDone("memory");
+      state.memoryNotes.push({round: state.round, note: memNote});
+      renderMemory();
+      log("agent-memory","Memory Manager", memNote.slice(0,140) + (memNote.length>140?"…":""));
+
+      prevComposite = composite;
+      if(state.stopped) return finishAbort();
+    }
+
+    // ---- Final Reviewer ----
+    setActiveAgent("final");
+    setStatus("Final Reviewer polishing the winning draft…", true);
+    log("agent-final","Final Reviewer", "Proofreading and finalizing…");
+    const finalRaw = await callClaude(
+      SYS_FINAL,
+      `Stop reason: ${stopReason} — ${stopDetail}\n\nFinal draft:\n${state.currentDraft}\n\nLast evaluation:\n${JSON.stringify(lastEval)}`,
+      {maxTokens:2200}
+    );
+    markDone("final");
+    const qaSplit = finalRaw.split(/QA NOTE:/i);
+    state.finalArticle = qaSplit[0].trim();
+    state.finalNote = (qaSplit[1]||"Draft approved for publication.").trim();
+    renderDraft(state.finalArticle, "FINAL");
+    log("agent-final","Final Reviewer", "Final polish complete. Publishing summary below.");
+
+    setStatus("Complete — " + stopReason, false);
+    roundPill.textContent = `Finished after ${state.round} rounds`;
+    renderFinalSummary();
+
+  }catch(err){
+    errorArea.innerHTML = `<div class="error-box">Run failed: ${escapeHtml(err.message)}. You can adjust the brief and try again — partial progress above is preserved.</div>`;
+    setStatus("Error — run halted", false);
+    log("sys","System", "Run halted due to unrecoverable error: " + err.message);
+  } finally {
+    state.running = false;
+    runBtn.disabled = false;
+    stopBtn.disabled = true;
+    resetBtn.disabled = false;
+    setActiveAgent(null);
+  }
+}
+
+function finishAbort(){
+  setStatus("Stopped by user", false);
+  log("sys","System", "Run stopped by user request.");
+  state.running = false;
+  runBtn.disabled = false;
+  stopBtn.disabled = true;
+  resetBtn.disabled = false;
+  setActiveAgent(null);
+}
+
+runBtn.addEventListener("click", runPipeline);
+stopBtn.addEventListener("click", ()=>{
+  state.stopped = true;
+  setStatus("Stopping after current call…", false);
+});
+resetBtn.addEventListener("click", ()=>{
+  location.reload();
+});
+
+})();
+</script>
+</body>
+</html>
